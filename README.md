@@ -1,6 +1,6 @@
-# @hariks789/react-native-background-geolocation
+# @anwar1909/react-native-background-geolocation
 
-[![npm](https://img.shields.io/npm/v/@hariks789/react-native-background-geolocation?style=flat-square)](https://www.npmjs.com/package/@hariks789/react-native-background-geolocation)
+[![npm](https://img.shields.io/npm/v/@anwar1909/react-native-background-geolocation?style=flat-square)](https://www.npmjs.com/package/@anwar1909/react-native-background-geolocation)
 
 > Forked from [@darron1217/react-native-background-geolocation](https://github.com/darron1217/react-native-background-geolocation) due to inactivity.
 Original Repo: [@mauron85/react-native-background-geolocation](https://github.com/mauron85/react-native-background-geolocation)
@@ -8,7 +8,7 @@ Original Repo: [@mauron85/react-native-background-geolocation](https://github.co
 ## Installation
 
 ```
-yarn add @hariks789/react-native-background-geolocation
+yarn add @anwar1909/react-native-background-geolocation
 ```
 
 ### Automatic setup
@@ -17,7 +17,7 @@ Since version 0.60 React Native does linking of modules [automatically](https://
 As plugin depends on additional 'common' module, it is required to link it with:
 
 ```
-node ./node_modules/@hariks789/react-native-background-geolocation/scripts/postlink.js
+node ./node_modules/@anwar1909/react-native-background-geolocation/scripts/postlink.js
 ```
 
 ### Manual setup
@@ -28,10 +28,10 @@ In `android/settings.gradle`
 
 ```gradle
 ...
-include ':@hariks789_react-native-background-geolocation-common'
-project(':@hariks789_react-native-background-geolocation-common').projectDir = new File(rootProject.projectDir, '../node_modules/@hariks789/react-native-background-geolocation/android/common')
-include ':@hariks789_react-native-background-geolocation'
-project(':@hariks789_react-native-background-geolocation').projectDir = new File(rootProject.projectDir, '../node_modules/@hariks789/react-native-background-geolocation/android/lib')
+include ':@anwar1909_react-native-background-geolocation-common'
+project(':@anwar1909_react-native-background-geolocation-common').projectDir = new File(rootProject.projectDir, '../node_modules/@anwar1909/react-native-background-geolocation/android/common')
+include ':@anwar1909_react-native-background-geolocation'
+project(':@anwar1909_react-native-background-geolocation').projectDir = new File(rootProject.projectDir, '../node_modules/@anwar1909/react-native-background-geolocation/android/lib')
 ...
 ```
 
@@ -40,7 +40,7 @@ In `android/app/build.gradle`
 ```gradle
 dependencies {
     ...
-    compile project(':@hariks789_react-native-background-geolocation')
+    compile project(':@anwar1909_react-native-background-geolocation')
     ...
 }
 ```
