@@ -24,6 +24,7 @@
 // If you don't like this please ask react guys nicely to add google maven repo into
 // their templates.
 
+
 apply plugin: 'com.android.library'
 
 apply from: '../common/VERSIONS.gradle'
