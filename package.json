@@ -1,6 +1,6 @@
 {
   "name": "@anwar1909/react-native-background-geolocation",
-  "version": "0.7.7",
+  "version": "0.7.8",
   "description": "Optimized background location tracking",
   "main": "./index.js",
   "types": "./index.d.ts",
@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/anwar1909/react-native-background-geolocation#readme",
   "dependencies": {
-    "@anwar1909/react-native-background-geolocation": "github:anwar1909/react-native-background-geolocation",
+    "@anwar1909/react-native-background-geolocation": "^0.7.5",
     "plist": "^3.0.1"
   },
   "peerDependencies": {
