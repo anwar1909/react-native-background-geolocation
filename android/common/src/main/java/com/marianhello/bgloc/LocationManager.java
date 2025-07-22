@@ -10,13 +10,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 
-import com.github.jparkie.promise.Promise;
-import com.github.jparkie.promise.Promises;
+// import com.github.jparkie.promise.Promise;
+// import com.github.jparkie.promise.Promises;
 // import com.intentfilter.androidpermissions.PermissionManager;
+import com.marianhello.bgloc.PermissionManager;
 
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
 public class LocationManager {
@@ -32,7 +34,7 @@ public class LocationManager {
         mContext = context;
     }
 
-    public class PermissionDeniedException extends Exception {}
+    // public class PermissionDeniedException extends Exception {}
 
     public static LocationManager getInstance(Context context) {
         if (mLocationManager == null) {
@@ -41,30 +43,103 @@ public class LocationManager {
         return mLocationManager;
     }
 
-    public Promise<Location> getCurrentLocation(final int timeout, final long maximumAge, final boolean enableHighAccuracy) {
-        final Promise<Location> promise = Promises.promise();
+    // public Promise<Location> getCurrentLocation(final int timeout, final long maximumAge, final boolean enableHighAccuracy) {
+    //     final Promise<Location> promise = Promises.promise();
 
-        // PermissionManager permissionManager = PermissionManager.getInstance(mContext);
+    //     // PermissionManager permissionManager = PermissionManager.getInstance(mContext);
+    //     // permissionManager.checkPermissions(Arrays.asList(PERMISSIONS), new PermissionManager.PermissionRequestListener() {
+    //     //     @Override
+    //     //     public void onPermissionGranted() {
+    //     //         try {
+    //     //             Location currentLocation = getCurrentLocationNoCheck(timeout, maximumAge, enableHighAccuracy);
+    //     //             promise.set(currentLocation);
+    //     //         } catch (TimeoutException e) {
+    //     //             promise.setError(e);
+    //     //         } catch (InterruptedException e) {
+    //     //             Thread.currentThread().interrupt();
+    //     //         }
+    //     //     }
+
+    //     //     @Override
+    //     //     public void onPermissionDenied() {
+    //     //         promise.setError(new PermissionDeniedException());
+    //     //     }
+    //     // });
+
+    //     return promise;
+    // }
+
+    // public CompletableFuture<Location> getCurrentLocation(final int timeout, final long maximumAge, final boolean enableHighAccuracy) {
+    //     final CompletableFuture<Location> future = new CompletableFuture<>();
+
+    //     // Contoh logika dummy
+    //     try {
+    //         Location currentLocation = getCurrentLocationNoCheck(timeout, maximumAge, enableHighAccuracy);
+    //         future.complete(currentLocation); // resolve future
+    //     } catch (TimeoutException e) {
+    //         future.completeExceptionally(e); // reject future dengan error
+    //     } catch (InterruptedException e) {
+    //         Thread.currentThread().interrupt();
+    //         future.completeExceptionally(e);
+    //     }
+
+    //     return future;
+    // }
+
+    public CompletableFuture<Location> getCurrentLocation(final int timeout, final long maximumAge, final boolean enableHighAccuracy) {
+        CompletableFuture<Location> future = new CompletableFuture<>();
+
+        // Simulasi permission checking dan mendapatkan lokasi
+        PermissionManager permissionManager = PermissionManager.getInstance(mContext);
         // permissionManager.checkPermissions(Arrays.asList(PERMISSIONS), new PermissionManager.PermissionRequestListener() {
         //     @Override
         //     public void onPermissionGranted() {
         //         try {
         //             Location currentLocation = getCurrentLocationNoCheck(timeout, maximumAge, enableHighAccuracy);
-        //             promise.set(currentLocation);
+        //             future.complete(currentLocation);
         //         } catch (TimeoutException e) {
-        //             promise.setError(e);
+        //             future.completeExceptionally(e);
         //         } catch (InterruptedException e) {
         //             Thread.currentThread().interrupt();
+        //             future.completeExceptionally(e);
+        //         } catch (Exception e) {
+        //             future.completeExceptionally(e);
         //         }
         //     }
 
         //     @Override
         //     public void onPermissionDenied() {
-        //         promise.setError(new PermissionDeniedException());
+        //         future.completeExceptionally(new PermissionDeniedException());
         //     }
         // });
+        permissionManager.checkPermissions(Arrays.asList(PERMISSIONS)).thenAccept(granted -> {
+            if (granted) {
+                // permissions granted
+                try {
+                    Location currentLocation = getCurrentLocationNoCheck(timeout, maximumAge, enableHighAccuracy);
+                    future.complete(currentLocation);
+                } catch (TimeoutException e) {
+                    future.completeExceptionally(e);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    future.completeExceptionally(e);
+                } catch (Exception e) {
+                    future.completeExceptionally(e);
+                }
+            } else {
+                // permissions denied
+                future.completeExceptionally(new PermissionDeniedException());
+            }
+        });
 
-        return promise;
+        return future;
+    }
+
+    // Tambahkan kelas ini jika belum ada
+    public static class PermissionDeniedException extends Exception {
+        public PermissionDeniedException() {
+            super("Permission Denied");
+        }
     }
 
     /**

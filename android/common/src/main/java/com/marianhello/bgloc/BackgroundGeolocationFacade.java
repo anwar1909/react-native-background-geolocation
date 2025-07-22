@@ -18,8 +18,9 @@ import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
-import com.github.jparkie.promise.Promise;
+// import com.github.jparkie.promise.Promise;
 // import com.intentfilter.androidpermissions.PermissionManager;
+import com.marianhello.bgloc.PermissionManager;
 import com.marianhello.bgloc.data.BackgroundActivity;
 import com.marianhello.bgloc.data.BackgroundLocation;
 import com.marianhello.bgloc.data.ConfigurationDAO;
@@ -43,6 +44,8 @@ import org.slf4j.event.Level;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class BackgroundGeolocationFacade {
@@ -211,28 +214,51 @@ public class BackgroundGeolocationFacade {
         mServiceBroadcastReceiverRegistered = false;
     }
 
+    // public void start() {
+    //     logger.debug("Starting service");
+
+    //     PermissionManager permissionManager = PermissionManager.getInstance(getContext());
+    //     permissionManager.checkPermissions(Arrays.asList(PERMISSIONS), new PermissionManager.PermissionRequestListener() {
+    //         @Override
+    //         public void onPermissionGranted() {
+    //             logger.info("User granted requested permissions");
+    //             // watch location mode changes
+    //             registerLocationModeChangeReceiver();
+    //             registerServiceBroadcast();
+    //             startBackgroundService();
+    //         }
+
+    //         @Override
+    //         public void onPermissionDenied() {
+    //             logger.info("User denied requested permissions");
+    //             if (mDelegate != null) {
+    //                 mDelegate.onAuthorizationChanged(BackgroundGeolocationFacade.AUTHORIZATION_DENIED);
+    //             }
+    //         }
+    //     });
+    // }
+
     public void start() {
         logger.debug("Starting service");
 
-        // PermissionManager permissionManager = PermissionManager.getInstance(getContext());
-        // permissionManager.checkPermissions(Arrays.asList(PERMISSIONS), new PermissionManager.PermissionRequestListener() {
-        //     @Override
-        //     public void onPermissionGranted() {
-        //         logger.info("User granted requested permissions");
-        //         // watch location mode changes
-        //         registerLocationModeChangeReceiver();
-        //         registerServiceBroadcast();
-        //         startBackgroundService();
-        //     }
-
-        //     @Override
-        //     public void onPermissionDenied() {
-        //         logger.info("User denied requested permissions");
-        //         if (mDelegate != null) {
-        //             mDelegate.onAuthorizationChanged(BackgroundGeolocationFacade.AUTHORIZATION_DENIED);
-        //         }
-        //     }
-        // });
+        PermissionManager permissionManager = PermissionManager.getInstance(getContext());
+        permissionManager.checkPermissions(Arrays.asList(PERMISSIONS)).thenAccept(granted -> {
+            if (granted) {
+                logger.info("User granted requested permissions");
+                registerLocationModeChangeReceiver();
+                registerServiceBroadcast();
+                startBackgroundService();
+            } else {
+                logger.info("User denied requested permissions");
+                if (mDelegate != null) {
+                    mDelegate.onAuthorizationChanged(BackgroundGeolocationFacade.AUTHORIZATION_DENIED);
+                }
+            }
+        })
+        .exceptionally(throwable -> {
+            logger.error("Permission check failed", throwable);
+            return null;
+        });
     }
 
     public void stop() {
@@ -297,35 +323,72 @@ public class BackgroundGeolocationFacade {
         dao.deleteAllLocations();
     }
 
+    // public BackgroundLocation getCurrentLocation(int timeout, long maximumAge, boolean enableHighAccuracy) throws PluginException {
+    //     logger.info("Getting current location with timeout:{} maximumAge:{} enableHighAccuracy:{}", timeout, maximumAge, enableHighAccuracy);
+
+    //     LocationManager locationManager = LocationManager.getInstance(getContext());
+    //     Promise<Location> promise = locationManager.getCurrentLocation(timeout, maximumAge, enableHighAccuracy);
+    //     try {
+    //         promise.await();
+    //         Location location = promise.get();
+    //         if (location != null) {
+    //             return BackgroundLocation.fromLocation(location);
+    //         }
+
+    //         Throwable error = promise.getError();
+    //         if (error == null) {
+    //             throw new PluginException("Location not available", 2); // LOCATION_UNAVAILABLE
+    //         }
+    //         if (error instanceof LocationManager.PermissionDeniedException) {
+    //             logger.warn("Getting current location failed due missing permissions");
+    //             throw new PluginException("Permission denied", 1); // PERMISSION_DENIED
+    //         }
+    //         if (error instanceof TimeoutException) {
+    //             throw new PluginException("Location request timed out", 3); // TIME_OUT
+    //         }
+
+    //         throw new PluginException(error.getMessage(), 2); // LOCATION_UNAVAILABLE
+    //     } catch (InterruptedException e) {
+    //         logger.error("Interrupted while waiting location", e);
+    //         Thread.currentThread().interrupt();
+    //         throw new RuntimeException("Interrupted while waiting location", e);
+    //     }
+    // }
+
     public BackgroundLocation getCurrentLocation(int timeout, long maximumAge, boolean enableHighAccuracy) throws PluginException {
-        logger.info("Getting current location with timeout:{} maximumAge:{} enableHighAccuracy:{}", timeout, maximumAge, enableHighAccuracy);
+    logger.info("Getting current location with timeout:{} maximumAge:{} enableHighAccuracy:{}", timeout, maximumAge, enableHighAccuracy);
 
         LocationManager locationManager = LocationManager.getInstance(getContext());
-        Promise<Location> promise = locationManager.getCurrentLocation(timeout, maximumAge, enableHighAccuracy);
+        CompletableFuture<Location> future = locationManager.getCurrentLocation(timeout, maximumAge, enableHighAccuracy); // ubah return type-nya juga
+
         try {
-            promise.await();
-            Location location = promise.get();
+            Location location = future.get(); // blocking sampai dapat hasil
+
             if (location != null) {
                 return BackgroundLocation.fromLocation(location);
             }
 
-            Throwable error = promise.getError();
-            if (error == null) {
-                throw new PluginException("Location not available", 2); // LOCATION_UNAVAILABLE
-            }
-            if (error instanceof LocationManager.PermissionDeniedException) {
-                logger.warn("Getting current location failed due missing permissions");
-                throw new PluginException("Permission denied", 1); // PERMISSION_DENIED
-            }
-            if (error instanceof TimeoutException) {
-                throw new PluginException("Location request timed out", 3); // TIME_OUT
-            }
+            // kalau null, anggap unavailable
+            throw new PluginException("Location not available", 2); // LOCATION_UNAVAILABLE
 
-            throw new PluginException(error.getMessage(), 2); // LOCATION_UNAVAILABLE
         } catch (InterruptedException e) {
             logger.error("Interrupted while waiting location", e);
             Thread.currentThread().interrupt();
             throw new RuntimeException("Interrupted while waiting location", e);
+
+        } catch (ExecutionException e) {
+            Throwable error = e.getCause(); // dapatkan error asli
+
+            if (error instanceof LocationManager.PermissionDeniedException) {
+                logger.warn("Getting current location failed due missing permissions");
+                throw new PluginException("Permission denied", 1); // PERMISSION_DENIED
+            }
+
+            if (error instanceof TimeoutException) {
+                throw new PluginException("Location request timed out", 3); // TIME_OUT
+            }
+
+            throw new PluginException(error != null ? error.getMessage() : "Unknown error", 2); // LOCATION_UNAVAILABLE
         }
     }
 
