@@ -53,14 +53,14 @@ def hasApp = findProject(':app') != null
 //     [configuration: "androidTestImplementation", dependency: testLibs.testRules],
 // ]
 
-repositories {
-    // Google dependencies are now hosted at Maven
-    // unfortunately this is ignored when installing as react-native plugin
-    maven {
-        url 'https://maven.google.com'
-    }
-    jcenter()
-}
+// repositories {
+//     // Google dependencies are now hosted at Maven
+//     // unfortunately this is ignored when installing as react-native plugin
+//     maven {
+//         url 'https://maven.google.com'
+//     }
+//     jcenter()
+// }
 
 android {
     compileSdkVersion 35
