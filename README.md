@@ -28,43 +28,146 @@ In `android/settings.gradle`
 
 ```gradle
 ...
+pluginManagement {
+    includeBuild("../node_modules/@react-native/gradle-plugin")
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.google.com' }
+    }
+}
+...
+// if you have code below please comment or delete
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() } // comment or delete
+includeBuild('../node_modules/@react-native/gradle-plugin')
+...
 include ':@anwar1909_react-native-background-geolocation-common'
-project(':@anwar1909_react-native-background-geolocation-common').projectDir = new File(rootProject.projectDir, '../node_modules/@anwar1909/react-native-background-geolocation/android/common')
+project(':@anwar1909_react-native-background-geolocation-common').projectDir = file(rootProject.projectDir, '../node_modules/@anwar1909/react-native-background-geolocation/android/common')
 include ':@anwar1909_react-native-background-geolocation'
-project(':@anwar1909_react-native-background-geolocation').projectDir = new File(rootProject.projectDir, '../node_modules/@anwar1909/react-native-background-geolocation/android/lib')
+project(':@anwar1909_react-native-background-geolocation').projectDir = file(rootProject.projectDir, '../node_modules/@anwar1909/react-native-background-geolocation/android/lib')
+...
+```
+
+Im `android/build.gradle`
+```gradle
+...
+buildscript {
+    ext {
+        ...
+        agpVersion = "8.4.1" // <- add this code
+        reactNativeGradlePluginVersion = "0.76.6" // <- add this code
+    }
+    repositories {
+        google() // <- add this code if not exist
+        mavenCentral() // <- add this code if not exist
+        maven { url 'https://jitpack.io' } // <- add this code if not exist
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:$agpVersion") // <- change to this code
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion") // <- change to this code
+        classpath("com.google.gms:google-services:4.4.2") // <- change to this code
+    }
+    ...
+}
+...
+project.ext {
+    set('react-native', [
+        versions: [
+            // Overriding Build/Android SDK Versions
+            android : [
+                minSdk    : minSdkVersion, // <- change to this code
+                targetSdk : targetSdkVersion, // <- change to this code
+                compileSdk: compileSdkVersion, // <- change to this code
+            ],
+            ...
+        ],
+    ])
+}
 ...
 ```
 
 In `android/app/build.gradle`
 
 ```gradle
+
+// apply plugin: "com.android.application"
+// apply plugin: "org.jetbrains.kotlin.android"
+// apply plugin: "com.facebook.react"
+// apply plugin: "com.google.gms.google-services"
+
+// from top code change to below code
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.facebook.react") version "0.76.6" // <- add version compatible for RN 0.76.6
+    id("com.google.gms.google-services")
+}
+...
+react {
+  ...
+  /* Autolinking */
+  autolinkLibrariesWithApp() // change this to below code
+
+  def autolinkingFile = file("$buildDir/generated/autolinking/autolinking.json")
+  if (autolinkingFile.exists()) {
+      autolinkLibrariesWithApp()
+  } else {
+      println "⚠️ Skipping autolinkLibrariesWithApp() because autolinking.json does not exist yet"
+  }
+  // if you not have file autolinking.json in $buildDir/generated/autolinking/ please create manualy
+  ...
+}
+...
 dependencies {
     ...
-    compile project(':@anwar1909_react-native-background-geolocation')
+    implementation project(':@anwar1909_react-native-background-geolocation')
+    implementation project(':@anwar1909_react-native-background-geolocation-common')
     ...
 }
 ```
 
-Register the module (in `MainApplication.java`)
+Register the module (in `MainApplication.kt`)
 
-```java
+```kotlin
 import com.marianhello.bgloc.react.BackgroundGeolocationPackage;  // <--- Import Package
 
-public class MainApplication extends Application implements ReactApplication {
+class MainApplication : Application(), ReactApplication {
   ...
-  /**
-   * A list of packages used by the app. If the app uses additional views
-   * or modules besides the default ones, add more packages here.
-   */
-  @Override
-  protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-          new BackgroundGeolocationPackage() // <---- Add the Package
-      );
+  override val reactNativeHost: ReactNativeHost = object : DefaultReactNativeHost(this) {
+    override fun getPackages(): List<ReactPackage> = PackageList(this).packages.apply {
+      // Packages that cannot be autolinked yet can be added manually here, for example:
+      // add(MyReactNativePackage())
+      add(BackgroundGeolocationPackage()) // <- add this code
+    }
+
+    override fun getJSMainModuleName(): String = "index"
+
+    override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
+
+    override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+    override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
   }
   ...
 }
+```
+
+In `android/app/src/main/res/values/strings.xml`
+```xml
+<resources>
+    <string name="app_name">Your App Name</string>
+    <string name="mauron85_bgloc_account_type">Your Package Name</string> <!--  add this code -->
+    <string name="mauron85_bgloc_content_authority">Your Package Name</string> <!--  add this code -->
+</resources>
 ```
 
 #### iOS setup
@@ -133,12 +236,16 @@ When ext is not provided then following defaults will be used:
 
 ```
 ext {
-  compileSdkVersion = 28
-  buildToolsVersion = "28.0.3"
-  targetSdkVersion = 28
-  minSdkVersion = 16
-  supportLibVersion = "28.0.0"
-  googlePlayServicesVersion = "11+"
+  compileSdkVersion = 35
+  buildToolsVersion = "35.0.0"
+  targetSdkVersion = 34
+  minSdkVersion = 24
+  ndkVersion = "26.1.10909125"
+  kotlinVersion = "1.9.24"
+  agpVersion = "8.4.1"
+  // supportLibVersion = "28.0.0"
+  // googlePlayServicesVersion = "11+"
+  reactNativeGradlePluginVersion = "0.76.6"
 }
 ```
 
@@ -173,12 +280,12 @@ The repository [react-native-background-geolocation-example](https://github.com/
 ## Quick example
 
 ```javascript
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import { Alert } from "react-native";
 import BackgroundGeolocation from "@anwar1909/react-native-background-geolocation";
 
-class BgTracking extends Component {
-  componentDidMount() {
+const BgTracking = () => {
+  useEffect(() => {
     BackgroundGeolocation.configure({
       desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
       stationaryRadius: 50,
@@ -197,29 +304,24 @@ class BgTracking extends Component {
       httpHeaders: {
         "X-FOO": "bar",
       },
-      // customize post properties
       postTemplate: {
         lat: "@latitude",
         lon: "@longitude",
-        foo: "bar", // you can also add your own properties
+        foo: "bar",
       },
     });
 
+    // Event listeners
     BackgroundGeolocation.on("location", (location) => {
-      // handle your locations here
-      // to perform long running operation on iOS
-      // you need to create background task
       BackgroundGeolocation.startTask((taskKey) => {
-        // execute long running task
-        // eg. ajax post location
-        // IMPORTANT: task has to be ended by endTask
+        // Bisa kirim location ke server di sini
         BackgroundGeolocation.endTask(taskKey);
       });
     });
 
     BackgroundGeolocation.on("stationary", (stationaryLocation) => {
-      // handle stationary locations here
-      Actions.sendLocation(stationaryLocation);
+      // Ganti Actions.sendLocation sesuai kebutuhan kamu
+      console.log("Stationary:", stationaryLocation);
     });
 
     BackgroundGeolocation.on("error", (error) => {
@@ -235,30 +337,25 @@ class BgTracking extends Component {
     });
 
     BackgroundGeolocation.on("authorization", (status) => {
-      console.log(
-        "[INFO] BackgroundGeolocation authorization status: " + status
-      );
+      console.log("[INFO] BackgroundGeolocation authorization status:", status);
       if (status !== BackgroundGeolocation.AUTHORIZED) {
-        // we need to set delay or otherwise alert may not be shown
-        setTimeout(
-          () =>
-            Alert.alert(
-              "App requires location tracking permission",
-              "Would you like to open app settings?",
-              [
-                {
-                  text: "Yes",
-                  onPress: () => BackgroundGeolocation.showAppSettings(),
-                },
-                {
-                  text: "No",
-                  onPress: () => console.log("No Pressed"),
-                  style: "cancel",
-                },
-              ]
-            ),
-          1000
-        );
+        setTimeout(() => {
+          Alert.alert(
+            "App requires location tracking permission",
+            "Would you like to open app settings?",
+            [
+              {
+                text: "Yes",
+                onPress: () => BackgroundGeolocation.showAppSettings(),
+              },
+              {
+                text: "No",
+                onPress: () => console.log("No Pressed"),
+                style: "cancel",
+              },
+            ]
+          );
+        }, 1000);
       }
     });
 
@@ -272,11 +369,6 @@ class BgTracking extends Component {
 
     BackgroundGeolocation.on("abort_requested", () => {
       console.log("[INFO] Server responded with 285 Updates Not Required");
-
-      // Here we can decide whether we want stop the updates or not.
-      // If you've configured the server to return 285, then it means the server does not require further update.
-      // So the normal thing to do here would be to `BackgroundGeolocation.stop()`.
-      // But you might be counting on it to receive location updates in the UI, so you could just reconfigure and set `url` to null.
     });
 
     BackgroundGeolocation.on("http_authorization", () => {
@@ -284,32 +376,19 @@ class BgTracking extends Component {
     });
 
     BackgroundGeolocation.checkStatus((status) => {
-      console.log(
-        "[INFO] BackgroundGeolocation service is running",
-        status.isRunning
-      );
-      console.log(
-        "[INFO] BackgroundGeolocation services enabled",
-        status.locationServicesEnabled
-      );
-      console.log(
-        "[INFO] BackgroundGeolocation auth status: " + status.authorization
-      );
+      console.log("[INFO] BackgroundGeolocation is running:", status.isRunning);
+      console.log("[INFO] Location services enabled:", status.locationServicesEnabled);
+      console.log("[INFO] Authorization status:", status.authorization);
 
-      // you don't need to check status before start (this is just the example)
       if (!status.isRunning) {
-        BackgroundGeolocation.start(); //triggers start on start event
+        BackgroundGeolocation.start();
       }
     });
 
-    // you can also just start without checking for status
-    // BackgroundGeolocation.start();
-  }
-
-  componentWillUnmount() {
-    // unregister all event listeners
-    BackgroundGeolocation.removeAllListeners();
-  }
+    return () => {
+      BackgroundGeolocation.removeAllListeners();
+    };
+  }, []);
 }
 
 export default BgTracking;
