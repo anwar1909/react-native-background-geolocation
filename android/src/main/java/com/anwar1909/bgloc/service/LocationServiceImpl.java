@@ -59,6 +59,39 @@ import static com.anwar1909.bgloc.service.LocationServiceIntentBuilder.getMessag
 public class LocationServiceImpl extends Service implements ProviderDelegate, LocationService {
 
     public static final String ACTION_BROADCAST = ".broadcast";
+    /**
+     * CommandId sent by the service to
+     * any registered clients with error.
+     */
+    public static final int MSG_ON_ERROR = 100;
+
+    /**
+     * CommandId sent by the service to
+     * any registered clients with the new position.
+     */
+    public static final int MSG_ON_LOCATION = 101;
+
+    /**
+     * CommandId sent by the service to
+     * any registered clients whenever the devices enters "stationary-mode"
+     */
+    public static final int MSG_ON_STATIONARY = 102;
+
+    /**
+     * CommandId sent by the service to
+     * any registered clients with new detected activity.
+     */
+    public static final int MSG_ON_ACTIVITY = 103;
+
+    public static final int MSG_ON_SERVICE_STARTED = 104;
+
+    public static final int MSG_ON_SERVICE_STOPPED = 105;
+
+    public static final int MSG_ON_ABORT_REQUESTED = 106;
+
+    public static final int MSG_ON_HTTP_AUTHORIZATION = 107;
+
+    /** notification id */
     private static int NOTIFICATION_ID = 1;
 
     private ResourceResolver mResolver;
