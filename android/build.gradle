@@ -1,27 +1,51 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+}
 
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
+android {
+    namespace "com.anwar1909.bgloc.react"
+    compileSdkVersion 35
+
+    defaultConfig {
+        minSdkVersion 24
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+        consumerProguardFiles 'proguard-rules.pro'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    dependencies {
-        classpath("com.android.tools.build:gradle:8.4.1")
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // Untuk autolinking + resolve AGP plugin >= 8.x
+    publishing {
+        singleVariant("release")
+        singleVariant("debug")
+    }
+
+    lint {
+        abortOnError false
     }
 }
 
-allprojects {
-    repositories {
-        mavenLocal()
-        google()
-        mavenCentral()
-
-        maven {
-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url("$rootDir/../node_modules/react-native/android")
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+            }
+            debug(MavenPublication) {
+                from components.debug
+            }
         }
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+dependencies {
+    implementation "com.facebook.react:react-native:+"
+    implementation "org.slf4j:slf4j-api:1.7.25"
 }
