@@ -89,14 +89,15 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    lint {
-        abortOnError false
-    }
-
     publishing {
         singleVariant("release")
         singleVariant("debug")
     }
+    
+    lint {
+        abortOnError false
+    }
+
 
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
