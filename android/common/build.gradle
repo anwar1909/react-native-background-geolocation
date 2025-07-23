@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 35
-    namespace 'com.marianhello.bgloc.common'
+    namespace 'com.anwar1909.bgloc.common'
 
     defaultConfig {
         minSdkVersion 24

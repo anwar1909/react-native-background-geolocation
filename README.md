@@ -139,7 +139,7 @@ dependencies {
 Register the module (in `MainApplication.kt`)
 
 ```kotlin
-import com.marianhello.bgloc.react.BackgroundGeolocationPackage;  // <--- Import Package
+import com.anwar1909.bgloc.react.BackgroundGeolocationPackage;  // <--- Import Package
 
 class MainApplication : Application(), ReactApplication {
   ...

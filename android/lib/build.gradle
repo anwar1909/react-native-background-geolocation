@@ -63,7 +63,7 @@ def hasApp = findProject(':app') != null
 // }
 
 android {
-    namespace "com.marianhello.bgloc.react"
+    namespace "com.anwar1909.bgloc.react"
     compileSdkVersion 35
     // buildToolsVersion "34.0.0"
     if (hasApp) {

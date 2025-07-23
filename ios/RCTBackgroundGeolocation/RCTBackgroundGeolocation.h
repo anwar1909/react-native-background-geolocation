@@ -2,7 +2,7 @@
 //  RCTBackgroundGeolocation.h
 //  RCTBackgroundGeolocation
 //
-//  Created by Marian Hello on 04/06/16.
+//  Created by Anwar 1909 on 04/06/16.
 //  Copyright © 2016 mauron85. All rights reserved.
 //
 

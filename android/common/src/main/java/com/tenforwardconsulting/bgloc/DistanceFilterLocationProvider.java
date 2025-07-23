@@ -23,9 +23,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-import com.marianhello.bgloc.Config;
-import com.marianhello.bgloc.provider.AbstractLocationProvider;
-import com.marianhello.utils.ToneGenerator.Tone;
+import com.anwar1909.bgloc.Config;
+import com.anwar1909.bgloc.provider.AbstractLocationProvider;
+import com.anwar1909.utils.ToneGenerator.Tone;
 
 import java.util.List;
 

@@ -3,7 +3,7 @@
 var { DeviceEventEmitter, NativeModules, AppRegistry } = require('react-native');
 var RNBackgroundGeolocation = NativeModules.BackgroundGeolocation;
 var TAG = 'RNBackgroundGeolocation';
-var TASK_KEY = 'com.marianhello.bgloc.react.headless.Task';
+var TASK_KEY = 'com.anwar1909.bgloc.react.headless.Task';
 
 function emptyFn() {}
 function defaultErrorHandler(error) {

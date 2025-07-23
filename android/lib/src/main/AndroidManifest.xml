@@ -20,7 +20,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1">
     <application>
         <!-- <service
-            android:name="com.marianhello.bgloc.sync.SyncService"
+            android:name="com.anwar1909.bgloc.sync.SyncService"
             android:exported="true"
             android:process=":sync">
             <intent-filter>
@@ -30,7 +30,7 @@
                 android:resource="@xml/syncadapter"/>
         </service>
         <service
-            android:name="com.marianhello.bgloc.sync.AuthenticatorService" android:exported="false">
+            android:name="com.anwar1909.bgloc.sync.AuthenticatorService" android:exported="false">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
@@ -39,13 +39,13 @@
                 android:resource="@xml/authenticator" />
         </service> -->
         <!-- <provider
-            android:name="com.marianhello.bgloc.data.provider.LocationContentProvider"
+            android:name="com.anwar1909.bgloc.data.provider.LocationContentProvider"
             android:authorities="@string/mauron85_bgloc_content_authority"
             android:exported="false"
             android:syncable="true"/> -->
-        <service android:enabled="true" android:exported="false" android:name="com.marianhello.bgloc.service.LocationServiceImpl" />
-        <service android:enabled="true" android:exported="false" android:name="com.marianhello.bgloc.react.headless.HeadlessService" />
-        <receiver android:enabled="true" android:exported="true" android:name="com.marianhello.bgloc.BootCompletedReceiver">
+        <service android:enabled="true" android:exported="false" android:name="com.anwar1909.bgloc.service.LocationServiceImpl" />
+        <service android:enabled="true" android:exported="false" android:name="com.anwar1909.bgloc.react.headless.HeadlessService" />
+        <receiver android:enabled="true" android:exported="true" android:name="com.anwar1909.bgloc.BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

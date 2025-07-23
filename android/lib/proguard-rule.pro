@@ -1,15 +1,15 @@
 # Keep all classes in your React Native module
--keep class com.marianhello.bgloc.react.** { *; }
+-keep class com.anwar1909.bgloc.react.** { *; }
 
 # Preserve specific important classes (explicit)
--keep class com.marianhello.bgloc.react.BackgroundGeolocationModule { *; }
--keep class com.marianhello.bgloc.react.BackgroundGeolocationPackage { *; }
--keep class com.marianhello.bgloc.react.ConfigMapper { *; }
+-keep class com.anwar1909.bgloc.react.BackgroundGeolocationModule { *; }
+-keep class com.anwar1909.bgloc.react.BackgroundGeolocationPackage { *; }
+-keep class com.anwar1909.bgloc.react.ConfigMapper { *; }
 
--keep class com.marianhello.bgloc.react.data.LocationMapper { *; }
+-keep class com.anwar1909.bgloc.react.data.LocationMapper { *; }
 
--keep class com.marianhello.bgloc.react.headless.HeadlessService { *; }
--keep class com.marianhello.bgloc.react.headless.HeadlessTaskRunner { *; }
+-keep class com.anwar1909.bgloc.react.headless.HeadlessService { *; }
+-keep class com.anwar1909.bgloc.react.headless.HeadlessTaskRunner { *; }
 
 # Required to avoid stripping React Native bridge
 -keepclassmembers class * extends com.facebook.react.bridge.ReactContextBaseJavaModule {
