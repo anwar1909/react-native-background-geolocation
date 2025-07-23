@@ -1,9 +1,7 @@
 module.exports = {
-  dependencies: {
-    platforms: {
-      android: {
-        sourceDir: 'android/lib',
-      },
+  platforms: {
+    android: {
+      sourceDir: 'android/lib',
     },
   },
 };

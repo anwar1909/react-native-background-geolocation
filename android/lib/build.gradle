@@ -27,13 +27,13 @@
 apply plugin: 'com.android.library'
 
 // apply from: '../common/VERSIONS.gradle'
-ext {
-    compileSdkVersion = 35
-    targetSdkVersion = 34
-    minSdkVersion = 24
-    kotlinVersion = '1.8.10'
-    playServicesLocationVersion = "21.0.1"
-}
+// ext {
+//     compileSdkVersion = 35
+//     targetSdkVersion = 34
+//     minSdkVersion = 24
+//     kotlinVersion = '1.8.10'
+//     playServicesLocationVersion = "21.0.1"
+// }
 def hasApp = findProject(':app') != null
 
 // https://hackernoon.com/android-how-to-add-gradle-dependencies-using-foreach-c4cbcc070458
@@ -64,7 +64,7 @@ def hasApp = findProject(':app') != null
 
 android {
     namespace "com.marianhello.bgloc.react"
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdkVersion 35
     // buildToolsVersion "34.0.0"
     if (hasApp) {
         evaluationDependsOn(':app')
@@ -72,17 +72,14 @@ android {
 
     // Tip: https://stackoverflow.com/questions/39987669/renamingdelegatingcontext-is-deprecated-how-do-we-test-sqlite-db-now/52170737#52170737
     // Gradle automatically adds 'android.test.runner' as a dependency.
-    useLibrary 'android.test.runner'
-    useLibrary 'android.test.base'
-    useLibrary 'android.test.mock'
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        minSdkVersion 24
+        targetSdkVersion 34
         versionCode 1 // intentionally not updating version as we're not uploading to any java repository
         versionName "1.0"
         consumerProguardFiles 'proguard-rules.pro'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -93,6 +90,10 @@ android {
     lint {
         abortOnError false
     }
+
+    useLibrary 'android.test.runner'
+    useLibrary 'android.test.base'
+    useLibrary 'android.test.mock'
 }
 
 dependencies {
