@@ -35,11 +35,12 @@
     "url": "https://github.com/anwar1909/react-native-background-geolocation/issues"
   },
   "homepage": "https://github.com/anwar1909/react-native-background-geolocation#readme",
-  "dependencies": {
-    "@anwar1909/react-native-background-geolocation": "^0.7.9",
-    "plist": "^3.0.1"
-  },
   "peerDependencies": {
     "react-native": ">=0.60.5"
+  },
+  "react-native": {
+    "android": {
+      "sourceDir": "./android/lib"
+    }
   }
 }
