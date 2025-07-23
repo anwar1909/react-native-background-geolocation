@@ -23,18 +23,18 @@ import android.text.TextUtils;
 import com.marianhello.bgloc.PermissionManager;
 import com.marianhello.bgloc.data.BackgroundActivity;
 import com.marianhello.bgloc.data.BackgroundLocation;
-import com.marianhello.bgloc.data.ConfigurationDAO;
-import com.marianhello.bgloc.data.DAOFactory;
-import com.marianhello.bgloc.data.LocationDAO;
+// import com.marianhello.bgloc.data.ConfigurationDAO;
+// import com.marianhello.bgloc.data.DAOFactory;
+// import com.marianhello.bgloc.data.LocationDAO;
 import com.marianhello.bgloc.provider.LocationProvider;
 import com.marianhello.bgloc.service.LocationService;
 import com.marianhello.bgloc.service.LocationServiceImpl;
 import com.marianhello.bgloc.service.LocationServiceProxy;
 import com.marianhello.bgloc.data.LocationTransform;
-import com.marianhello.bgloc.sync.AccountHelper;
+// import com.marianhello.bgloc.sync.AccountHelper;
 import com.marianhello.bgloc.sync.NotificationHelper;
-import com.marianhello.bgloc.sync.SyncService;
-import com.marianhello.logging.DBLogReader;
+// import com.marianhello.bgloc.sync.SyncService;
+// import com.marianhello.logging.DBLogReader;
 import com.marianhello.logging.LogEntry;
 import com.marianhello.logging.LoggerManager;
 import com.marianhello.logging.UncaughtExceptionLogger;
@@ -297,31 +297,31 @@ public class BackgroundGeolocationFacade {
         }
     }
 
-    public Collection<BackgroundLocation> getLocations() {
-        LocationDAO dao = DAOFactory.createLocationDAO(getContext());
-        return dao.getAllLocations();
-    }
+    // public Collection<BackgroundLocation> getLocations() {
+    //     LocationDAO dao = DAOFactory.createLocationDAO(getContext());
+    //     return dao.getAllLocations();
+    // }
 
-    public Collection<BackgroundLocation> getValidLocations() {
-        LocationDAO dao = DAOFactory.createLocationDAO(getContext());
-        return dao.getValidLocations();
-    }
+    // public Collection<BackgroundLocation> getValidLocations() {
+    //     LocationDAO dao = DAOFactory.createLocationDAO(getContext());
+    //     return dao.getValidLocations();
+    // }
 
     public BackgroundLocation getStationaryLocation() {
         return mStationaryLocation;
     }
 
-    public void deleteLocation(Long locationId) {
-        logger.info("Deleting location locationId={}", locationId);
-        LocationDAO dao = DAOFactory.createLocationDAO(getContext());
-        dao.deleteLocationById(locationId.longValue());
-    }
+    // public void deleteLocation(Long locationId) {
+    //     logger.info("Deleting location locationId={}", locationId);
+    //     LocationDAO dao = DAOFactory.createLocationDAO(getContext());
+    //     dao.deleteLocationById(locationId.longValue());
+    // }
 
-    public void deleteAllLocations() {
-        logger.info("Deleting all locations");
-        LocationDAO dao = DAOFactory.createLocationDAO(getContext());
-        dao.deleteAllLocations();
-    }
+    // public void deleteAllLocations() {
+    //     logger.info("Deleting all locations");
+    //     LocationDAO dao = DAOFactory.createLocationDAO(getContext());
+    //     dao.deleteAllLocations();
+    // }
 
     // public BackgroundLocation getCurrentLocation(int timeout, long maximumAge, boolean enableHighAccuracy) throws PluginException {
     //     logger.info("Getting current location with timeout:{} maximumAge:{} enableHighAccuracy:{}", timeout, maximumAge, enableHighAccuracy);
@@ -401,13 +401,21 @@ public class BackgroundGeolocationFacade {
     }
 
     public synchronized void configure(Config config) throws PluginException {
-        try
-        {
-            Config newConfig = Config.merge(getStoredConfig(), config);
-            persistConfiguration(newConfig);
-            logger.debug("Service configured with: {}", newConfig.toString());
-            mConfig = newConfig;
-            mService.configure(newConfig);
+        // try
+        // {
+        //     Config newConfig = Config.merge(getStoredConfig(), config);
+        //     persistConfiguration(newConfig);
+        //     logger.debug("Service configured with: {}", newConfig.toString());
+        //     mConfig = newConfig;
+        //     mService.configure(newConfig);
+        // } catch (Exception e) {
+        //     logger.error("Configuration error: {}", e.getMessage());
+        //     throw new PluginException("Configuration error", e, PluginException.CONFIGURE_ERROR);
+        // }
+        try {
+            logger.debug("Service configured with: {}", config.toString());
+            mConfig = config;
+            mService.configure(config);
         } catch (Exception e) {
             logger.error("Configuration error: {}", e.getMessage());
             throw new PluginException("Configuration error", e, PluginException.CONFIGURE_ERROR);
@@ -415,43 +423,43 @@ public class BackgroundGeolocationFacade {
     }
 
     public synchronized Config getConfig() {
-        if (mConfig != null) {
-            return mConfig;
-        }
-
-        try {
-            mConfig = getStoredConfig();
-        } catch (PluginException e) {
-            logger.error("Error getting stored config will use default", e.getMessage());
+        if (mConfig == null) {
             mConfig = Config.getDefault();
         }
+
+        // try {
+        //     mConfig = getStoredConfig();
+        // } catch (PluginException e) {
+        //     logger.error("Error getting stored config will use default", e.getMessage());
+        //     mConfig = Config.getDefault();
+        // }
 
         return mConfig;
     }
 
-    public synchronized Config getStoredConfig() throws PluginException {
-        try {
-            ConfigurationDAO dao = DAOFactory.createConfigurationDAO(getContext());
-            Config config = dao.retrieveConfiguration();
-            if (config == null) {
-                config = Config.getDefault();
-            }
-            return config;
-        } catch (JSONException e) {
-            logger.error("Error getting stored config: {}", e.getMessage());
-            throw new PluginException("Error getting stored config", e, PluginException.JSON_ERROR);
-        }
-    }
+    // public synchronized Config getStoredConfig() throws PluginException {
+    //     try {
+    //         ConfigurationDAO dao = DAOFactory.createConfigurationDAO(getContext());
+    //         Config config = dao.retrieveConfiguration();
+    //         if (config == null) {
+    //             config = Config.getDefault();
+    //         }
+    //         return config;
+    //     } catch (JSONException e) {
+    //         logger.error("Error getting stored config: {}", e.getMessage());
+    //         throw new PluginException("Error getting stored config", e, PluginException.JSON_ERROR);
+    //     }
+    // }
 
-    public Collection<LogEntry> getLogEntries(int limit) {
-        DBLogReader logReader = new DBLogReader();
-        return logReader.getEntries(limit, 0, Level.DEBUG);
-    }
+    // public Collection<LogEntry> getLogEntries(int limit) {
+    //     DBLogReader logReader = new DBLogReader();
+    //     return logReader.getEntries(limit, 0, Level.DEBUG);
+    // }
 
-    public Collection<LogEntry> getLogEntries(int limit, int offset, String minLevel) {
-        DBLogReader logReader = new DBLogReader();
-        return logReader.getEntries(limit, offset, Level.valueOf(minLevel));
-    }
+    // public Collection<LogEntry> getLogEntries(int limit, int offset, String minLevel) {
+    //     DBLogReader logReader = new DBLogReader();
+    //     return logReader.getEntries(limit, offset, Level.valueOf(minLevel));
+    // }
 
     /**
      * Force location sync
@@ -459,13 +467,13 @@ public class BackgroundGeolocationFacade {
      * Method is ignoring syncThreshold and also user sync settings preference
      * and sync locations to defined syncUrl
      */
-    public void forceSync() {
-        logger.debug("Sync locations forced");
-        ResourceResolver resolver = ResourceResolver.newInstance(getContext());
-        Account syncAccount = AccountHelper.CreateSyncAccount(getContext(), resolver.getAccountName(),
-                resolver.getAccountType());
-        SyncService.sync(syncAccount, resolver.getAuthority(), true);
-    }
+    // public void forceSync() {
+    //     logger.debug("Sync locations forced");
+    //     ResourceResolver resolver = ResourceResolver.newInstance(getContext());
+    //     Account syncAccount = AccountHelper.CreateSyncAccount(getContext(), resolver.getAccountName(),
+    //             resolver.getAccountType());
+    //     SyncService.sync(syncAccount, resolver.getAuthority(), true);
+    // }
 
     public int getAuthorizationStatus() {
         return hasPermissions() ? AUTHORIZATION_AUTHORIZED : AUTHORIZATION_DENIED;
@@ -515,10 +523,10 @@ public class BackgroundGeolocationFacade {
         return ((LocationServiceProxy) mService).isRunning();
     }
 
-    private void persistConfiguration(Config config) throws NullPointerException {
-        ConfigurationDAO dao = DAOFactory.createConfigurationDAO(getContext());
-        dao.persistConfiguration(config);
-    }
+    // private void persistConfiguration(Config config) throws NullPointerException {
+    //     ConfigurationDAO dao = DAOFactory.createConfigurationDAO(getContext());
+    //     dao.persistConfiguration(config);
+    // }
 
     private Context getContext() {
         return mContext;

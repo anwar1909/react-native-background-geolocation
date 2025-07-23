@@ -63,11 +63,9 @@ def hasApp = findProject(':app') != null
 // }
 
 android {
-    compileSdkVersion 35
-
     namespace "com.marianhello.bgloc.react"
-
-    buildToolsVersion "34.0.0"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    // buildToolsVersion "34.0.0"
     if (hasApp) {
         evaluationDependsOn(':app')
     }
@@ -79,14 +77,20 @@ android {
     useLibrary 'android.test.mock'
 
     defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        minSdkVersion 24
-        targetSdkVersion 34
         versionCode 1 // intentionally not updating version as we're not uploading to any java repository
         versionName "1.0"
+        consumerProguardFiles 'proguard-rules.pro'
     }
 
-    lintOptions {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
         abortOnError false
     }
 }

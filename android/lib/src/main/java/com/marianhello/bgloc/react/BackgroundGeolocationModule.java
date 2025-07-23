@@ -200,50 +200,54 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
 
     @ReactMethod
     public void getLocations(final Callback success, final Callback error) {
-        runOnBackgroundThread(new Runnable() {
-            public void run() {
-                WritableArray locationsArray = Arguments.createArray();
-                Collection<BackgroundLocation> locations = facade.getLocations();
-                for (BackgroundLocation location : locations) {
-                    locationsArray.pushMap(LocationMapper.toWriteableMapWithId(location));
-                }
-                success.invoke(locationsArray);
-            }
-        });
+        // runOnBackgroundThread(new Runnable() {
+        //     public void run() {
+        //         WritableArray locationsArray = Arguments.createArray();
+        //         Collection<BackgroundLocation> locations = facade.getLocations();
+        //         for (BackgroundLocation location : locations) {
+        //             locationsArray.pushMap(LocationMapper.toWriteableMapWithId(location));
+        //         }
+        //         success.invoke(locationsArray);
+        //     }
+        // });
+        success.invoke(Arguments.createArray());
     }
 
     @ReactMethod
     public void getValidLocations(final Callback success, Callback error) {
-        runOnBackgroundThread(new Runnable() {
-            public void run() {
-                WritableArray locationsArray = Arguments.createArray();
-                Collection<BackgroundLocation> locations = facade.getValidLocations();
-                for (BackgroundLocation location : locations) {
-                    locationsArray.pushMap(LocationMapper.toWriteableMapWithId(location));
-                }
-                success.invoke(locationsArray);
-            }
-        });
+        // runOnBackgroundThread(new Runnable() {
+        //     public void run() {
+        //         WritableArray locationsArray = Arguments.createArray();
+        //         Collection<BackgroundLocation> locations = facade.getValidLocations();
+        //         for (BackgroundLocation location : locations) {
+        //             locationsArray.pushMap(LocationMapper.toWriteableMapWithId(location));
+        //         }
+        //         success.invoke(locationsArray);
+        //     }
+        // });
+        success.invoke(Arguments.createArray());
     }
 
     @ReactMethod
     public void deleteLocation(final Integer locationId, final Callback success, Callback error) {
-        runOnBackgroundThread(new Runnable() {
-            public void run() {
-                facade.deleteLocation(locationId.longValue());
-                success.invoke(true);
-            }
-        });
+        // runOnBackgroundThread(new Runnable() {
+        //     public void run() {
+        //         facade.deleteLocation(locationId.longValue());
+        //         success.invoke(true);
+        //     }
+        // });
+        success.invoke(true);
     }
 
     @ReactMethod
     public void deleteAllLocations(final Callback success, Callback error) {
-        runOnBackgroundThread(new Runnable() {
-            public void run() {
-                facade.deleteAllLocations();
-                success.invoke(true);
-            }
-        });
+        // runOnBackgroundThread(new Runnable() {
+        //     public void run() {
+        //         facade.deleteAllLocations();
+        //         success.invoke(true);
+        //     }
+        // });
+        success.invoke(true);
     }
 
     @ReactMethod
@@ -328,8 +332,8 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
 
     @ReactMethod
     public void forceSync(Callback success, Callback error) {
-        facade.forceSync();
-        success.invoke();
+        // facade.forceSync();
+        success.invoke(true);
     }
 
     private void sendEvent(String eventName, Object params) {
