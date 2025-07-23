@@ -31,6 +31,7 @@ import com.anwar1909.bgloc.PluginException;
 import com.anwar1909.bgloc.ResourceResolver;
 import com.anwar1909.bgloc.data.BackgroundActivity;
 import com.anwar1909.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.data.LocationTransform;
 import com.anwar1909.bgloc.headless.AbstractTaskRunner;
 import com.anwar1909.bgloc.headless.ActivityTask;
 import com.anwar1909.bgloc.headless.LocationTask;
