@@ -19,31 +19,6 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1" package="com.anwar1909.bgloc.common">
     <application>
-        <!-- <service
-            android:name="com.anwar1909.bgloc.sync.SyncService"
-            android:exported="true"
-            android:process=":sync">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter"/>
-            </intent-filter>
-            <meta-data android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter"/>
-        </service>
-        <service
-            android:name="com.anwar1909.bgloc.sync.AuthenticatorService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service> -->
-        <!-- <provider
-            android:name="com.anwar1909.bgloc.data.provider.LocationContentProvider"
-            android:authorities="@string/mauron85_bgloc_content_authority"
-            android:exported="false"
-            android:syncable="true"/> -->
         <service android:enabled="true" android:exported="false" android:name="com.anwar1909.bgloc.service.LocationServiceImpl" android:foregroundServiceType="location" />
         <receiver android:enabled="true" android:exported="true" android:name="com.anwar1909.bgloc.BootCompletedReceiver">
             <intent-filter>
@@ -61,9 +36,6 @@
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/> -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 </manifest>
