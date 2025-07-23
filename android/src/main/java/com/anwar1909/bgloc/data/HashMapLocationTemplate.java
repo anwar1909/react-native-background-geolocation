@@ -1,6 +1,6 @@
 package com.anwar1909.bgloc.data;
 
-import com.anwar1909.utils.CloneHelper;
+import com.anwar1909.bgloc.utils.CloneHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;

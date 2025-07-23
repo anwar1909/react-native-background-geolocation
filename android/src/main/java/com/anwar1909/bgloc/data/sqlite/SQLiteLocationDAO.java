@@ -10,8 +10,8 @@ import android.text.TextUtils;
 import com.anwar1909.bgloc.data.BackgroundLocation;
 import com.anwar1909.bgloc.data.LocationDAO;
 import com.anwar1909.bgloc.data.sqlite.SQLiteLocationContract.LocationEntry;
-import ru.andremoniy.sqlbuilder.SqlExpression;
-import ru.andremoniy.sqlbuilder.SqlSelectStatement;
+import com.anwar1909.bgloc.ru.andremoniy.sqlbuilder.SqlExpression;
+import com.anwar1909.bgloc.ru.andremoniy.sqlbuilder.SqlSelectStatement;
 
 import java.util.ArrayList;
 import java.util.Collection;

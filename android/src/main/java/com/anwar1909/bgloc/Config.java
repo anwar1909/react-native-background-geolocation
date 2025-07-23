@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 import com.anwar1909.bgloc.data.AbstractLocationTemplate;
 import com.anwar1909.bgloc.data.LocationTemplate;
 import com.anwar1909.bgloc.data.LocationTemplateFactory;
-import com.anwar1909.utils.CloneHelper;
+import com.anwar1909.bgloc.utils.CloneHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;

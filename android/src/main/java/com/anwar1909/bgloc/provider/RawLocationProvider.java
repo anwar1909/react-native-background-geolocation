@@ -8,7 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 import com.anwar1909.bgloc.Config;
-import com.anwar1909.logging.LoggerManager;
+import com.anwar1909.bgloc.logging.LoggerManager;
 
 /**
  * Created by finch on 7.11.2017.

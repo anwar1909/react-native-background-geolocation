@@ -12,7 +12,7 @@ package com.anwar1909.bgloc.provider;
 import android.content.Context;
 
 import com.anwar1909.bgloc.Config;
-import com.tenforwardconsulting.bgloc.DistanceFilterLocationProvider;
+import com.anwar1909.bgloc.tenforwardconsulting.bgloc.DistanceFilterLocationProvider;
 
 import java.lang.IllegalArgumentException;
 

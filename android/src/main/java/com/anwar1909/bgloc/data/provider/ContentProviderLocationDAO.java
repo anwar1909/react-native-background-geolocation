@@ -13,13 +13,13 @@ import com.anwar1909.bgloc.data.BackgroundLocation;
 import com.anwar1909.bgloc.data.LocationDAO;
 import com.anwar1909.bgloc.data.sqlite.SQLiteLocationContract;
 import com.anwar1909.bgloc.data.sqlite.SQLiteLocationContract.LocationEntry;
-import com.anwar1909.logging.LoggerManager;
+import com.anwar1909.bgloc.logging.LoggerManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import ru.andremoniy.sqlbuilder.SqlExpression;
-import ru.andremoniy.sqlbuilder.SqlSelectStatement;
+import com.anwar1909.bgloc.ru.andremoniy.sqlbuilder.SqlExpression;
+import com.anwar1909.bgloc.ru.andremoniy.sqlbuilder.SqlSelectStatement;
 
 public class ContentProviderLocationDAO implements LocationDAO {
     private org.slf4j.Logger logger;
@@ -131,7 +131,7 @@ public class ContentProviderLocationDAO implements LocationDAO {
         subsql.orderBy(LocationEntry.COLUMN_NAME_TIME);
 
         String substmt = subsql.statement();
-        substmt = com.anwar1909.utils.TextUtils.removeLastChar(substmt, ";");
+        substmt = com.anwar1909.bgloc.utils.TextUtils.removeLastChar(substmt, ";");
 
         BackgroundLocation location = null;
         Cursor cursor = null;
@@ -169,7 +169,7 @@ public class ContentProviderLocationDAO implements LocationDAO {
         subsql.orderBy(LocationEntry.COLUMN_NAME_TIME);
 
         String substmt = subsql.statement();
-        substmt = com.anwar1909.utils.TextUtils.removeLastChar(substmt, ";");
+        substmt = com.anwar1909.bgloc.utils.TextUtils.removeLastChar(substmt, ";");
 
         BackgroundLocation location = null;
         Cursor cursor = null;

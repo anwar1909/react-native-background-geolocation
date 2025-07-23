@@ -1,6 +1,6 @@
 package com.anwar1909.bgloc.data;
 
-import com.anwar1909.utils.Convert;
+import com.anwar1909.bgloc.utils.Convert;
 
 import org.json.JSONArray;
 import org.json.JSONException;

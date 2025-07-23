@@ -34,10 +34,10 @@ import com.anwar1909.bgloc.data.LocationTransform;
 // import com.anwar1909.bgloc.sync.AccountHelper;
 import com.anwar1909.bgloc.sync.NotificationHelper;
 // import com.anwar1909.bgloc.sync.SyncService;
-// import com.anwar1909.logging.DBLogReader;
-import com.anwar1909.logging.LogEntry;
-import com.anwar1909.logging.LoggerManager;
-import com.anwar1909.logging.UncaughtExceptionLogger;
+// import com.anwar1909.bgloc.logging.DBLogReader;
+import com.anwar1909.bgloc.logging.LogEntry;
+import com.anwar1909.bgloc.logging.LoggerManager;
+import com.anwar1909.bgloc.logging.UncaughtExceptionLogger;
 
 import org.json.JSONException;
 import org.slf4j.event.Level;

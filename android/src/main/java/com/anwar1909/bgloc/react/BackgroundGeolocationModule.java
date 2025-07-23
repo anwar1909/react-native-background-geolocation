@@ -21,8 +21,8 @@ import com.anwar1909.bgloc.data.BackgroundActivity;
 import com.anwar1909.bgloc.data.BackgroundLocation;
 import com.anwar1909.bgloc.react.data.LocationMapper;
 import com.anwar1909.bgloc.react.headless.HeadlessTaskRunner;
-import com.anwar1909.logging.LogEntry;
-import com.anwar1909.logging.LoggerManager;
+import com.anwar1909.bgloc.logging.LogEntry;
+import com.anwar1909.bgloc.logging.LoggerManager;
 
 import org.json.JSONException;
 

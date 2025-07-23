@@ -13,7 +13,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.anwar1909.bgloc.ResourceResolver;
-import com.anwar1909.logging.LoggerManager;
+import com.anwar1909.bgloc.logging.LoggerManager;
 
 public class NotificationHelper {
     public static final String SERVICE_CHANNEL_ID = "bglocservice";

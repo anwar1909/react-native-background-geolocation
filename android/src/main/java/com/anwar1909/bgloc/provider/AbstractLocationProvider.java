@@ -23,9 +23,9 @@ import com.anwar1909.bgloc.Config;
 import com.anwar1909.bgloc.PluginException;
 import com.anwar1909.bgloc.data.BackgroundActivity;
 import com.anwar1909.bgloc.data.BackgroundLocation;
-import com.anwar1909.logging.LoggerManager;
-import com.anwar1909.utils.ToneGenerator;
-import com.anwar1909.utils.ToneGenerator.Tone;
+import com.anwar1909.bgloc.logging.LoggerManager;
+import com.anwar1909.bgloc.utils.ToneGenerator;
+import com.anwar1909.bgloc.utils.ToneGenerator.Tone;
 
 /**
  * AbstractLocationProvider

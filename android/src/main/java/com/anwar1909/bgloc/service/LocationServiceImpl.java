@@ -42,10 +42,10 @@ import com.anwar1909.bgloc.provider.LocationProvider;
 import com.anwar1909.bgloc.provider.LocationProviderFactory;
 import com.anwar1909.bgloc.provider.ProviderDelegate;
 import com.anwar1909.bgloc.sync.NotificationHelper;
-import com.anwar1909.logging.LoggerManager;
-import com.anwar1909.logging.UncaughtExceptionLogger;
+import com.anwar1909.bgloc.logging.LoggerManager;
+import com.anwar1909.bgloc.logging.UncaughtExceptionLogger;
 
-import org.chromium.content.browser.ThreadUtils;
+import com.anwar1909.bgloc.org.chromium.content.browser.ThreadUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 

@@ -19,7 +19,7 @@ import com.anwar1909.bgloc.HttpPostService;
 import com.anwar1909.bgloc.data.ConfigurationDAO;
 import com.anwar1909.bgloc.data.DAOFactory;
 import com.anwar1909.bgloc.service.LocationServiceImpl;
-import com.anwar1909.logging.LoggerManager;
+import com.anwar1909.bgloc.logging.LoggerManager;
 
 import org.json.JSONException;
 

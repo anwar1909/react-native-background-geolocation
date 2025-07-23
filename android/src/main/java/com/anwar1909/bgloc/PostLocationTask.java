@@ -2,7 +2,7 @@ package com.anwar1909.bgloc;
 
 import com.anwar1909.bgloc.data.BackgroundLocation;
 import com.anwar1909.bgloc.data.LocationDAO;
-import com.anwar1909.logging.LoggerManager;
+import com.anwar1909.bgloc.logging.LoggerManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;

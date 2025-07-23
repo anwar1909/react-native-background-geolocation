@@ -21,7 +21,7 @@ import com.anwar1909.bgloc.data.provider.LocationContentProvider;
 import com.anwar1909.bgloc.data.sqlite.SQLiteLocationContract;
 import com.anwar1909.bgloc.data.sqlite.SQLiteLocationContract.LocationEntry;
 import com.anwar1909.bgloc.data.sqlite.SQLiteOpenHelper;
-import com.anwar1909.logging.LoggerManager;
+import com.anwar1909.bgloc.logging.LoggerManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;

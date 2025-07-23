@@ -3,7 +3,7 @@ package com.anwar1909.bgloc.react.data;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.anwar1909.bgloc.data.BackgroundLocation;
-import com.anwar1909.utils.Convert;
+import com.anwar1909.bgloc.utils.Convert;
 
 /**
  * Created by finch on 29.11.2016.
