@@ -240,25 +240,28 @@ public class BackgroundGeolocationFacade {
 
     public void start() {
         logger.debug("Starting service");
+        registerLocationModeChangeReceiver();
+        registerServiceBroadcast();
+        startBackgroundService();
 
-        PermissionManager permissionManager = PermissionManager.getInstance(getContext());
-        permissionManager.checkPermissions(Arrays.asList(PERMISSIONS)).thenAccept(granted -> {
-            if (granted) {
-                logger.info("User granted requested permissions");
-                registerLocationModeChangeReceiver();
-                registerServiceBroadcast();
-                startBackgroundService();
-            } else {
-                logger.info("User denied requested permissions");
-                if (mDelegate != null) {
-                    mDelegate.onAuthorizationChanged(BackgroundGeolocationFacade.AUTHORIZATION_DENIED);
-                }
-            }
-        })
-        .exceptionally(throwable -> {
-            logger.error("Permission check failed", throwable);
-            return null;
-        });
+        // PermissionManager permissionManager = PermissionManager.getInstance(getContext());
+        // permissionManager.checkPermissions(Arrays.asList(PERMISSIONS)).thenAccept(granted -> {
+        //     if (granted) {
+        //         logger.info("User granted requested permissions");
+        //         registerLocationModeChangeReceiver();
+        //         registerServiceBroadcast();
+        //         startBackgroundService();
+        //     } else {
+        //         logger.info("User denied requested permissions");
+        //         if (mDelegate != null) {
+        //             mDelegate.onAuthorizationChanged(BackgroundGeolocationFacade.AUTHORIZATION_DENIED);
+        //         }
+        //     }
+        // })
+        // .exceptionally(throwable -> {
+        //     logger.error("Permission check failed", throwable);
+        //     return null;
+        // });
     }
 
     public void stop() {
