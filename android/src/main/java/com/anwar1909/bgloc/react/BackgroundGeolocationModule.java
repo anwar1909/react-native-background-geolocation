@@ -283,23 +283,23 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
     public void getLogEntries(final Integer limit, final Integer offset, final String minLevel, final Callback success, final Callback error) {
         runOnBackgroundThread(new Runnable() {
             public void run() {
-                WritableArray logEntriesArray = Arguments.createArray();
-                Collection<LogEntry> logEntries = facade.getLogEntries(limit, offset, minLevel);
-                for (LogEntry logEntry : logEntries) {
-                    WritableMap out = Arguments.createMap();
-                    out.putInt("id", logEntry.getId());
-                    out.putInt("context", logEntry.getContext());
-                    out.putString("level", logEntry.getLevel());
-                    out.putString("message", logEntry.getMessage());
-                    out.putString("timestamp", new Long(logEntry.getTimestamp()).toString());
-                    out.putString("logger", logEntry.getLoggerName());
-                    if (logEntry.hasStackTrace()) {
-                        out.putString("stackTrace", logEntry.getStackTrace());
-                    }
+                // WritableArray logEntriesArray = Arguments.createArray();
+                // Collection<LogEntry> logEntries = facade.getLogEntries(limit, offset, minLevel);
+                // for (LogEntry logEntry : logEntries) {
+                //     WritableMap out = Arguments.createMap();
+                //     out.putInt("id", logEntry.getId());
+                //     out.putInt("context", logEntry.getContext());
+                //     out.putString("level", logEntry.getLevel());
+                //     out.putString("message", logEntry.getMessage());
+                //     out.putString("timestamp", new Long(logEntry.getTimestamp()).toString());
+                //     out.putString("logger", logEntry.getLoggerName());
+                //     if (logEntry.hasStackTrace()) {
+                //         out.putString("stackTrace", logEntry.getStackTrace());
+                //     }
 
-                    logEntriesArray.pushMap(out);
-                }
-                success.invoke(logEntriesArray);
+                //     logEntriesArray.pushMap(out);
+                // }
+                success.invoke(true);
             }
         });
     }

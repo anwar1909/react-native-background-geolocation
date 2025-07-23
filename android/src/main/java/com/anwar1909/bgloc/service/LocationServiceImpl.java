@@ -110,6 +110,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     private static boolean sIsRunning = false;
     private boolean mIsInForeground = false;
 
+    private static LocationTransform sLocationTransform;
     private static LocationProviderFactory sLocationProviderFactory;
 
     private class ServiceHandler extends Handler {
@@ -258,6 +259,12 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
         bundle.putInt("action", MSG_ON_SERVICE_STARTED);
         bundle.putLong("serviceId", mServiceId);
         broadcastMessage(bundle);
+    }
+
+    @Override
+    public synchronized void startForegroundService() {
+        start();
+        startForeground();
     }
 
     @Override
@@ -417,5 +424,13 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     public static boolean isRunning() {
         return sIsRunning;
+    }
+
+    public static void setLocationTransform(@Nullable LocationTransform transform) {
+        sLocationTransform = transform;
+    }
+
+    public static @Nullable LocationTransform getLocationTransform() {
+        return sLocationTransform;
     }
 } 
