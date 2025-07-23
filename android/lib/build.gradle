@@ -26,48 +26,15 @@
 
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
 }
 
-// apply from: '../common/VERSIONS.gradle'
-// ext {
-//     compileSdkVersion = 35
-//     targetSdkVersion = 34
-//     minSdkVersion = 24
-//     kotlinVersion = '1.8.10'
-//     playServicesLocationVersion = "21.0.1"
-// }
 def hasApp = findProject(':app') != null
-
-// https://hackernoon.com/android-how-to-add-gradle-dependencies-using-foreach-c4cbcc070458
-// def projDependencies = [
-//     [configuration: "implementation", dependency: libs.slf4j],
-//     [configuration: "implementation", dependency: libs.reactNative],
-//     [configuration: "testImplementation", dependency: testLibs.testRunner],
-//     [configuration: "testImplementation", dependency: testLibs.testRules],
-//     [configuration: "testImplementation", dependency: testLibs.junit],
-//     [configuration: "testImplementation", dependency: testLibs.powermockMockito],
-//     [configuration: "testImplementation", dependency: testLibs.powermockjUnit],
-//     [configuration: "testImplementation", dependency: testLibs.powermockClassloading],
-//     [configuration: "testImplementation", dependency: testLibs.mockitoCore],
-//     [configuration: "testImplementation", dependency: testLibs.festAssertCore],
-//     [configuration: "testImplementation", dependency: testLibs.robolectric],
-//     [configuration: "androidTestImplementation", dependency: testLibs.testRunner],
-//     [configuration: "androidTestImplementation", dependency: testLibs.testRules],
-// ]
-
-// repositories {
-//     // Google dependencies are now hosted at Maven
-//     // unfortunately this is ignored when installing as react-native plugin
-//     maven {
-//         url 'https://maven.google.com'
-//     }
-//     jcenter()
-// }
 
 android {
     namespace "com.anwar1909.bgloc.react"
     compileSdkVersion 35
-    // buildToolsVersion "34.0.0"
+    
     if (hasApp) {
         evaluationDependsOn(':app')
     }
@@ -93,7 +60,7 @@ android {
         singleVariant("release")
         singleVariant("debug")
     }
-    
+
     lint {
         abortOnError false
     }
@@ -102,6 +69,19 @@ android {
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+            }
+            debug(MavenPublication) {
+                from components.debug
+            }
+        }
+    }
 }
 
 dependencies {
