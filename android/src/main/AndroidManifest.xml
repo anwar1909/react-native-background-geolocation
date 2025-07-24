@@ -26,6 +26,10 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name="com.anwar1909.bgloc.ActivityRecognitionReceiver"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
     <uses-permission android:name="android.hardware.location" />

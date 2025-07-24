@@ -83,7 +83,7 @@ public class BackgroundGeolocationFacade {
         logger = LoggerManager.getLogger(BackgroundGeolocationFacade.class);
         LoggerManager.enableDBLogging();
 
-        logger.info("Initializing plugin");
+        logger.info("BackgroundGeolocationFacade: Initializing plugin");
 
         NotificationHelper.registerAllChannels(getApplicationContext());
     }

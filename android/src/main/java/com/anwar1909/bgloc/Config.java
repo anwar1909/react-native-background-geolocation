@@ -378,7 +378,7 @@ public class Config implements Parcelable
     }
 
     public Integer getInterval() {
-        return interval;
+        return interval != null ? interval : 50000;
     }
 
     public void setInterval(Integer interval) {

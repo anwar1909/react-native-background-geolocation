@@ -27,52 +27,48 @@ import java.util.Map;
 public class ConfigMapper {
     public static Config fromMap(ReadableMap options) throws JSONException {
         Config config = new Config();
-        if (options.hasKey("stationaryRadius")) config.setStationaryRadius((float) options.getDouble("stationaryRadius"));
-        if (options.hasKey("distanceFilter")) config.setDistanceFilter(options.getInt("distanceFilter"));
-        if (options.hasKey("desiredAccuracy")) config.setDesiredAccuracy(options.getInt("desiredAccuracy"));
-        if (options.hasKey("debug")) config.setDebugging(options.getBoolean("debug"));
-        if (options.hasKey("notificationTitle")) config.setNotificationTitle(
-                !options.isNull("notificationTitle") ? options.getString("notificationTitle") : Config.NullString
-        );
-        if (options.hasKey("notificationText")) config.setNotificationText(
-                !options.isNull("notificationText") ? options.getString("notificationText") : Config.NullString
-        );
-        if (options.hasKey("notificationIconLarge")) config.setLargeNotificationIcon(
-                !options.isNull("notificationIconLarge") ? options.getString("notificationIconLarge") : Config.NullString
-        );
-        if (options.hasKey("notificationIconSmall")) config.setSmallNotificationIcon(
-                !options.isNull("notificationIconSmall") ? options.getString("notificationIconSmall") : Config.NullString
-        );
-        if (options.hasKey("notificationIconColor")) config.setNotificationIconColor(
-                !options.isNull("notificationIconColor") ? options.getString("notificationIconColor") : Config.NullString
-        );
-        if (options.hasKey("stopOnTerminate")) config.setStopOnTerminate(options.getBoolean("stopOnTerminate"));
-        if (options.hasKey("startOnBoot")) config.setStartOnBoot(options.getBoolean("startOnBoot"));
-        if (options.hasKey("startForeground")) config.setStartForeground(options.getBoolean("startForeground"));
-        if (options.hasKey("notificationsEnabled")) config.setNotificationsEnabled(options.getBoolean("notificationsEnabled"));
-        if (options.hasKey("locationProvider")) config.setLocationProvider(options.getInt("locationProvider"));
-        if (options.hasKey("interval")) config.setInterval(options.getInt("interval"));
-        if (options.hasKey("fastestInterval")) config.setFastestInterval(options.getInt("fastestInterval"));
-        if (options.hasKey("activitiesInterval")) config.setActivitiesInterval(options.getInt("activitiesInterval"));
-        if (options.hasKey("stopOnStillActivity")) config.setStopOnStillActivity(options.getBoolean("stopOnStillActivity"));
-        if (options.hasKey("url")) config.setUrl(
-                !options.isNull("url") ? options.getString("url") : Config.NullString
-        );
-        if (options.hasKey("syncUrl")) config.setSyncUrl(
-                !options.isNull("syncUrl") ? options.getString("syncUrl") : Config.NullString
-        );
-        if (options.hasKey("syncThreshold")) config.setSyncThreshold(options.getInt("syncThreshold"));
+
+        // Basic float & int
+        config.setStationaryRadius(options.hasKey("stationaryRadius") ? (float) options.getDouble("stationaryRadius") : 50f);
+        config.setDistanceFilter(options.hasKey("distanceFilter") ? options.getInt("distanceFilter") : 50);
+        config.setDesiredAccuracy(options.hasKey("desiredAccuracy") ? options.getInt("desiredAccuracy") : 100);
+
+        // Boolean
+        config.setDebugging(options.hasKey("debug") && options.getBoolean("debug"));
+        config.setStopOnTerminate(options.hasKey("stopOnTerminate") && options.getBoolean("stopOnTerminate"));
+        config.setStartOnBoot(options.hasKey("startOnBoot") && options.getBoolean("startOnBoot"));
+        config.setStartForeground(options.hasKey("startForeground") && options.getBoolean("startForeground"));
+        config.setNotificationsEnabled(options.hasKey("notificationsEnabled") && options.getBoolean("notificationsEnabled"));
+        config.setStopOnStillActivity(options.hasKey("stopOnStillActivity") && options.getBoolean("stopOnStillActivity"));
+
+        // Integers with fallback
+        config.setLocationProvider(options.hasKey("locationProvider") ? options.getInt("locationProvider") : 1);
+        config.setInterval(options.hasKey("interval") ? options.getInt("interval") : 10000);
+        config.setFastestInterval(options.hasKey("fastestInterval") ? options.getInt("fastestInterval") : 5000);
+        config.setActivitiesInterval(options.hasKey("activitiesInterval") ? options.getInt("activitiesInterval") : 10000);
+        config.setSyncThreshold(options.hasKey("syncThreshold") ? options.getInt("syncThreshold") : 50);
+        config.setMaxLocations(options.hasKey("maxLocations") ? options.getInt("maxLocations") : 100);
+
+        // String config
+        config.setNotificationTitle(options.hasKey("notificationTitle") && !options.isNull("notificationTitle") ? options.getString("notificationTitle") : Config.NullString);
+        config.setNotificationText(options.hasKey("notificationText") && !options.isNull("notificationText") ? options.getString("notificationText") : Config.NullString);
+        config.setLargeNotificationIcon(options.hasKey("notificationIconLarge") && !options.isNull("notificationIconLarge") ? options.getString("notificationIconLarge") : Config.NullString);
+        config.setSmallNotificationIcon(options.hasKey("notificationIconSmall") && !options.isNull("notificationIconSmall") ? options.getString("notificationIconSmall") : Config.NullString);
+        config.setNotificationIconColor(options.hasKey("notificationIconColor") && !options.isNull("notificationIconColor") ? options.getString("notificationIconColor") : Config.NullString);
+        config.setUrl(options.hasKey("url") && !options.isNull("url") ? options.getString("url") : Config.NullString);
+        config.setSyncUrl(options.hasKey("syncUrl") && !options.isNull("syncUrl") ? options.getString("syncUrl") : Config.NullString);
+
+        // HTTP headers
         if (options.hasKey("httpHeaders")) {
-            HashMap httpHeaders = new HashMap<String, String>();
             ReadableType type = options.getType("httpHeaders");
             if (type != ReadableType.Map) {
                 throw new JSONException("httpHeaders must be object");
             }
-            JSONObject httpHeadersJson =  MapUtil.toJSONObject(options.getMap("httpHeaders"));
+            JSONObject httpHeadersJson = MapUtil.toJSONObject(options.getMap("httpHeaders"));
             config.setHttpHeaders(httpHeadersJson);
         }
-        if (options.hasKey("maxLocations")) config.setMaxLocations(options.getInt("maxLocations"));
 
+        // Post template
         if (options.hasKey("postTemplate")) {
             if (options.isNull("postTemplate")) {
                 config.setTemplate(LocationTemplateFactory.getDefault());

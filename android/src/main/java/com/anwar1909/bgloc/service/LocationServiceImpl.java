@@ -160,7 +160,11 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
         mResolver = ResourceResolver.newInstance(this);
         NotificationHelper.registerServiceChannel(this);
-        registerReceiver(connectivityChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(connectivityChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION), Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(connectivityChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION), null, mServiceHandler);
+        }
     }
 
     @Override
@@ -327,6 +331,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public synchronized void configure(Config config) {
+        if (config.getInterval() == null) config.setInterval(10000);
         this.mConfig = config;
     }
 
@@ -400,10 +405,10 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
         }
     }
 
-    @Override
-    public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
-        return super.registerReceiver(receiver, filter, null, mServiceHandler);
-    }
+    // @Override
+    // public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+    //     return super.registerReceiver(receiver, filter, null, mServiceHandler);
+    // }
 
     @Override
     public void unregisterReceiver(BroadcastReceiver receiver) {

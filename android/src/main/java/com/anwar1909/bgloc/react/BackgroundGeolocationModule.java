@@ -299,7 +299,23 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
 
                 //     logEntriesArray.pushMap(out);
                 // }
-                success.invoke(true);
+                try {
+                    WritableMap log = Arguments.createMap();
+                    log.putString("level", minLevel);
+                    log.putString("message", "This is a direct event from native! No logs were read.");
+                    log.putInt("limit", limit != null ? limit : -1);
+                    log.putInt("offset", offset != null ? offset : -1);
+
+                    // Kirim event ke JS
+                    getReactApplicationContext()
+                        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit("onLibraryErrorLog", log);
+
+                    success.invoke(true);
+                } catch (Exception e) {
+                    error.invoke(e.getMessage());
+                }
+                // success.invoke(true);
             }
         });
     }
