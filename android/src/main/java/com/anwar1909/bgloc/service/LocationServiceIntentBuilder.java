@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import androidx.annotation.IntDef;
 
 import java.lang.annotation.Retention;
@@ -172,6 +173,10 @@ public class LocationServiceIntentBuilder {
         return this;
     }
 
+    public static Intent buildStartIntent(Context context, Parcelable config) {
+        return new LocationServiceIntentBuilder(context).setCommand(CommandId.START, config).build();
+    }
+
     public Intent build() {
         assert mContext != null : "Context can not be null!";
         Intent intent = new Intent(mContext, LocationServiceImpl.class);
@@ -185,19 +190,42 @@ public class LocationServiceIntentBuilder {
     }
 
     public static boolean containsCommand(Intent intent) {
-        return intent.hasExtra(KEY_COMMAND);
+        if (intent == null) {
+            Log.e("BGGeo", "❌ containsCommand(): intent is null");
+            return false;
+        }
+        boolean has = intent.hasExtra(KEY_COMMAND);
+        Log.d("BGGeo", "📦 containsCommand(): " + has + " - " + intent);
+        return has;
     }
 
     public static boolean containsMessage(Intent intent) {
+        if (intent == null) {
+            Log.e("BGGeo", "❌ containsMessage(): intent is null");
+            return false;
+        }
         return intent.hasExtra(KEY_MESSAGE);
     }
 
     public static Command getCommand(Intent intent) {
+        if (intent == null) {
+            Log.e("BGGeo", "❌ getCommand(): intent is null");
+            return null;
+        }
         Bundle bundle = intent.getBundleExtra(KEY_COMMAND);
+        if (bundle == null) {
+            Log.e("BGGeo", "❌ getCommand(): KEY_COMMAND not found in intent");
+            return null;
+        }
+        Log.d("BGGeo", "✅ getCommand(): " + bundle);
         return Command.from(bundle);
     }
 
     public static String getMessage(Intent intent) {
+        if (intent == null) {
+            Log.e("BGGeo", "❌ getMessage(): intent is null");
+            return null;
+        }
         return intent.getStringExtra(KEY_MESSAGE);
     }
 } //end class LocationServiceIntentBuilder

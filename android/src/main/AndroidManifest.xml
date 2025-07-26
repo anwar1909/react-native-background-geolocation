@@ -19,17 +19,17 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1" package="com.anwar1909.bgloc.react">
     <application>
-        <service android:enabled="true" android:exported="false" android:name="com.anwar1909.bgloc.service.LocationServiceImpl" />
+        <service android:enabled="true" android:exported="false" android:name="com.anwar1909.bgloc.service.LocationServiceImpl" android:foregroundServiceType="location" />
         <service android:enabled="true" android:exported="false" android:name="com.anwar1909.bgloc.react.headless.HeadlessService" />
         <receiver android:enabled="true" android:exported="true" android:name="com.anwar1909.bgloc.BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver
+        <!-- <receiver
             android:name="com.anwar1909.bgloc.ActivityRecognitionReceiver"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false" /> -->
     </application>
 
     <uses-permission android:name="android.hardware.location" />

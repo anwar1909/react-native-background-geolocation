@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 
 import com.anwar1909.bgloc.Config;
+import com.anwar1909.bgloc.BackgroundGeolocationFacade;
 
 public class LocationServiceProxy implements LocationService, LocationServiceInfo {
     private final Context mContext;
@@ -65,6 +66,16 @@ public class LocationServiceProxy implements LocationService, LocationServiceInf
 
     @Override
     public void start() {
+        BackgroundGeolocationFacade facade = BackgroundGeolocationFacade.getInstance(mContext);
+        Config config = facade.getConfig();
+        if (config != null) {
+        // Kirim CONFIGURE dulu
+        Intent configIntent = mIntentBuilder.setCommand(CommandId.CONFIGURE, config).build();
+            Log.d("BGGeo", "✅ LocationServiceProxy -> start(): Sending CONFIGURE with config");
+            executeIntentCommand(configIntent);
+        } else {
+            Log.w("BGGeo", "⚠️ LocationServiceProxy -> start(): Config is null, skip CONFIGURE");
+        }
         Intent intent = mIntentBuilder.setCommand(CommandId.START).build();
 //        intent.addFlags(Intent.FLAG_FROM_BACKGROUND);
         // start service to keep service running even if no clients are bound to it

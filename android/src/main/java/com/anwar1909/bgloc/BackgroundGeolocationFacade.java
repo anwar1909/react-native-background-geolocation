@@ -12,6 +12,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import androidx.core.content.ContextCompat;
@@ -63,6 +64,7 @@ public class BackgroundGeolocationFacade {
     private boolean mServiceBroadcastReceiverRegistered = false;
     private boolean mLocationModeChangeReceiverRegistered = false;
     private boolean mIsPaused = false;
+    private boolean isConfigured = false;
 
     private Config mConfig;
     private final Context mContext;
@@ -86,6 +88,15 @@ public class BackgroundGeolocationFacade {
         logger.info("BackgroundGeolocationFacade: Initializing plugin");
 
         NotificationHelper.registerAllChannels(getApplicationContext());
+    }
+
+    private static BackgroundGeolocationFacade instance;
+
+    public static BackgroundGeolocationFacade getInstance(Context context) {
+        if (instance == null) {
+            instance = new BackgroundGeolocationFacade(context, null);
+        }
+        return instance;
     }
 
     private BroadcastReceiver locationModeChangeReceiver = new BroadcastReceiver() {
@@ -180,10 +191,12 @@ public class BackgroundGeolocationFacade {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private synchronized void registerLocationModeChangeReceiver() {
+        logger.debug("BackgroundGeolocationFacade->registerLocationModeChangeReceiver: "+mLocationModeChangeReceiverRegistered);
         if (mLocationModeChangeReceiverRegistered) return;
 
         getContext().registerReceiver(locationModeChangeReceiver, new IntentFilter(android.location.LocationManager.MODE_CHANGED_ACTION));
         mLocationModeChangeReceiverRegistered = true;
+        logger.debug("BackgroundGeolocationFacade->registerLocationModeChangeReceiver: Next "+mLocationModeChangeReceiverRegistered);
     }
 
     private synchronized void unregisterLocationModeChangeReceiver() {
@@ -197,10 +210,12 @@ public class BackgroundGeolocationFacade {
     }
 
     private synchronized void registerServiceBroadcast() {
+        logger.debug("BackgroundGeolocationFacade->registerServiceBroadcast: "+ mServiceBroadcastReceiverRegistered);
         if (mServiceBroadcastReceiverRegistered) return;
 
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(serviceBroadcastReceiver, new IntentFilter(LocationServiceImpl.ACTION_BROADCAST));
         mServiceBroadcastReceiverRegistered = true;
+        logger.debug("BackgroundGeolocationFacade->registerServiceBroadcast: Next "+ mServiceBroadcastReceiverRegistered);
     }
 
     private synchronized void unregisterServiceBroadcast() {
@@ -239,7 +254,20 @@ public class BackgroundGeolocationFacade {
     // }
 
     public void start() {
-        logger.debug("Starting service");
+        logger.debug("BackgroundGeolocationFacade: Starting service");
+        Log.d("BGGeo", "✅ BackgroundGeolocationFacade -> start() called");
+
+        if (mService != null && mConfig != null) {
+            try {
+                Log.d("BGGeo", "✅ Sending config to LocationServiceImpl before start");
+                mService.configure(mConfig); // ⬅️ ⬅️ ⬅️ INI WAJIB
+            } catch (Exception e) {
+                Log.e("BGGeo", "❌ Error during mService.configure: " + e.getMessage(), e);
+            }
+        } else {
+            Log.w("BGGeo", "⚠️ mService or mConfig is null");
+        }
+
         registerLocationModeChangeReceiver();
         registerServiceBroadcast();
         startBackgroundService();
@@ -404,6 +432,7 @@ public class BackgroundGeolocationFacade {
     }
 
     public synchronized void configure(Config config) throws PluginException {
+        Log.d("BGGeo", "✅ BackgroundGeolocationFacade -> configure() called with config: " + config.toString());
         // try
         // {
         //     Config newConfig = Config.merge(getStoredConfig(), config);
@@ -419,6 +448,7 @@ public class BackgroundGeolocationFacade {
             logger.debug("Service configured with: {}", config.toString());
             mConfig = config;
             mService.configure(config);
+            isConfigured = true;
         } catch (Exception e) {
             logger.error("Configuration error: {}", e.getMessage());
             throw new PluginException("Configuration error", e, PluginException.CONFIGURE_ERROR);
@@ -478,6 +508,10 @@ public class BackgroundGeolocationFacade {
     //     SyncService.sync(syncAccount, resolver.getAuthority(), true);
     // }
 
+    public boolean isConfigured() {
+        return isConfigured;
+    }
+
     public int getAuthorizationStatus() {
         return hasPermissions() ? AUTHORIZATION_AUTHORIZED : AUTHORIZATION_DENIED;
     }
@@ -515,6 +549,7 @@ public class BackgroundGeolocationFacade {
         } else {
             mService.start();
         }
+        logger.info("BackgroundGeolocationFacade->startBackgroundService(): "+mIsPaused);
     }
 
     private void stopBackgroundService() {

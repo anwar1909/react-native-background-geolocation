@@ -22,6 +22,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Build;
+import android.util.Log;
 
 import com.anwar1909.bgloc.Config;
 import com.anwar1909.bgloc.provider.AbstractLocationProvider;
@@ -81,24 +83,44 @@ public class DistanceFilterLocationProvider extends AbstractLocationProvider imp
     public void onCreate() {
         super.onCreate();
 
-        locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-        alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        if (mContext == null) {
+            Log.e("BGGeo", "❌ onCreate: mContext is null!");
+            return;
+        }
+
+        try {
+            locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+            alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        } catch (Exception e) {
+            Log.e("BGGeo", "❌ Error getSystemService: " + e.getMessage(), e);
+            return;
+        }
 
         // Stop-detection PI
         stationaryAlarmPI = PendingIntent.getBroadcast(mContext, 0, new Intent(STATIONARY_ALARM_ACTION), PendingIntent.FLAG_IMMUTABLE );
         registerReceiver(stationaryAlarmReceiver, new IntentFilter(STATIONARY_ALARM_ACTION));
 
-        // Stationary region PI
-        stationaryRegionPI = PendingIntent.getBroadcast(mContext, 0, new Intent(STATIONARY_REGION_ACTION), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        registerReceiver(stationaryRegionReceiver, new IntentFilter(STATIONARY_REGION_ACTION));
+        int regionFlags = PendingIntent.FLAG_CANCEL_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            regionFlags |= PendingIntent.FLAG_MUTABLE;
+        }
 
-        // Stationary location monitor PI
-        stationaryLocationPollingPI = PendingIntent.getBroadcast(mContext, 0, new Intent(STATIONARY_LOCATION_MONITOR_ACTION), PendingIntent.FLAG_IMMUTABLE);
-        registerReceiver(stationaryLocationMonitorReceiver, new IntentFilter(STATIONARY_LOCATION_MONITOR_ACTION));
+        try{
+            // Stationary region PI
+            stationaryRegionPI = PendingIntent.getBroadcast(mContext, 0, new Intent(STATIONARY_REGION_ACTION), regionFlags);
+            registerReceiver(stationaryRegionReceiver, new IntentFilter(STATIONARY_REGION_ACTION));
 
-        // One-shot PI (TODO currently unused)
-        singleUpdatePI = PendingIntent.getBroadcast(mContext, 0, new Intent(SINGLE_LOCATION_UPDATE_ACTION), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        registerReceiver(singleUpdateReceiver, new IntentFilter(SINGLE_LOCATION_UPDATE_ACTION));
+            // Stationary location monitor PI
+            stationaryLocationPollingPI = PendingIntent.getBroadcast(mContext, 0, new Intent(STATIONARY_LOCATION_MONITOR_ACTION), PendingIntent.FLAG_IMMUTABLE);
+            registerReceiver(stationaryLocationMonitorReceiver, new IntentFilter(STATIONARY_LOCATION_MONITOR_ACTION));
+
+            // One-shot PI (TODO currently unused)
+            singleUpdatePI = PendingIntent.getBroadcast(mContext, 0, new Intent(SINGLE_LOCATION_UPDATE_ACTION), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            registerReceiver(singleUpdateReceiver, new IntentFilter(SINGLE_LOCATION_UPDATE_ACTION));
+        } catch (Exception e) {
+            Log.e("BGGeo", "❌ Error registerReceiver or PendingIntent: " + e.getMessage(), e);
+            return;
+        }
 
         // Location criteria
         criteria = new Criteria();

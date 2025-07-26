@@ -60,6 +60,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:1.6.1"
     implementation "androidx.localbroadcastmanager:localbroadcastmanager:1.1.0"
     implementation "com.google.android.gms:play-services-location:21.0.1"
+    implementation 'com.google.android.gms:play-services-base:18.2.0'
     implementation "org.slf4j:slf4j-api:1.7.30"
     implementation "com.github.tony19:logback-android:2.0.0"
     implementation 'com.android.volley:volley:1.2.1'

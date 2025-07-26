@@ -3,6 +3,7 @@ package com.anwar1909.bgloc.service;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.pm.ServiceInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -200,6 +202,10 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("BGGeo", "✅ LocationServiceImpl -> onStartCommand invoked");
+        Log.d("BGGeo", "Intent action: " + (intent != null ? intent.getAction() : "null"));
+        Log.d("BGGeo", "containsCommand: " + containsCommand(intent));
+        Log.d("BGGeo", "containsMessage: " + containsMessage(intent));
         if (intent == null || !containsCommand(intent)) {
             start();
             return START_STICKY;
@@ -207,7 +213,11 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
         if (containsCommand(intent)) {
             LocationServiceIntentBuilder.Command cmd = getCommand(intent);
-            processCommand(cmd.getId(), cmd.getArgument());
+            if (cmd != null) {
+                processCommand(cmd.getId(), cmd.getArgument());
+            } else {
+                logger.warn("⚠️ Command is null, skipping");
+            }
         }
 
         if (containsMessage(intent)) {
@@ -220,6 +230,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     private void processMessage(String message) {}
 
     private void processCommand(int command, Object arg) {
+        Log.d("BGGeo", "⚙️ processCommand() -> id: " + command + ", arg: " + arg);
         try {
             switch (command) {
                 case CommandId.START: start(); break;
@@ -231,6 +242,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
                 case CommandId.REGISTER_HEADLESS_TASK: registerHeadlessTask((String) arg); break;
                 case CommandId.START_HEADLESS_TASK: startHeadlessTask(); break;
                 case CommandId.STOP_HEADLESS_TASK: stopHeadlessTask(); break;
+                default: logger.warn("⚠️ Unhandled command: " + command); break;
             }
         } catch (Exception e) {
             logger.error("processCommand: exception", e);
@@ -239,31 +251,50 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public synchronized void start() {
-        if (sIsRunning) return;
-
-        if (mConfig == null) {
-            logger.warn("Starting with default config");
-            mConfig = getConfig();
+        Log.d("BGGeo", "🚀 LocationServiceImpl -> start() called");
+        if (sIsRunning) {
+            Log.d("BGGeo", "⚠️ Already running, skip");
+            return;
         }
 
+        if (mConfig == null) {
+            Log.d("BGGeo", "⚠️ Config is null");
+            logger.warn("Starting with default config");
+            // mConfig = getConfig();
+            return;
+        }
+
+        Log.d("BGGeo", "✅ Will start service with config: " + mConfig.toString());
         logger.debug("Will start service with: {}", mConfig.toString());
 
-        LocationProviderFactory spf = sLocationProviderFactory != null ? sLocationProviderFactory : new LocationProviderFactory(this);
-        mProvider = spf.getInstance(mConfig.getLocationProvider());
-        mProvider.setDelegate(this);
-        mProvider.onCreate();
-        mProvider.onConfigure(mConfig);
+        try{
+            LocationProviderFactory spf = sLocationProviderFactory != null ? sLocationProviderFactory : new LocationProviderFactory(this);
+            Log.d("BGGeo", "✅ Created LocationProviderFactory");
+            mProvider = spf.getInstance(mConfig.getLocationProvider());
+            Log.d("BGGeo", "✅ mProvider created: " + mProvider.getClass().getSimpleName());
+            mProvider.setDelegate(this);
+            mProvider.onCreate();
+            mProvider.onConfigure(mConfig);
 
-        sIsRunning = true;
-        ThreadUtils.runOnUiThreadBlocking(() -> {
-            mProvider.onStart();
-            if (mConfig.getStartForeground()) startForeground();
-        });
+            Log.d("BGGeo", "✅ Provider configured");
 
-        Bundle bundle = new Bundle();
-        bundle.putInt("action", MSG_ON_SERVICE_STARTED);
-        bundle.putLong("serviceId", mServiceId);
-        broadcastMessage(bundle);
+            sIsRunning = true;
+            ThreadUtils.runOnUiThreadBlocking(() -> {
+                mProvider.onStart();
+                Log.d("BGGeo", "✅ mProvider.onStart called");
+                if (mConfig.getStartForeground()) startForeground();
+                Log.d("BGGeo", "✅ Foreground started");
+            });
+
+            // Log.d("BGGeo", "✅ Provider started");
+
+            Bundle bundle = new Bundle();
+            bundle.putInt("action", MSG_ON_SERVICE_STARTED);
+            bundle.putLong("serviceId", mServiceId);
+            broadcastMessage(bundle);
+        } catch (Exception e) {
+            Log.e("BGGeo", "❌ Error in start(): " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -324,6 +355,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     }
 
     private void broadcastMessage(Bundle bundle) {
+        Log.d("BGGeo", "📢 Broadcasting: " + bundle.toString());
         Intent intent = new Intent(ACTION_BROADCAST);
         intent.putExtras(bundle);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
@@ -332,6 +364,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     @Override
     public synchronized void configure(Config config) {
         if (config.getInterval() == null) config.setInterval(10000);
+        Log.d("BGGeo", "⚙️ Reconfigured with: " + config.toString());
         this.mConfig = config;
     }
 
@@ -386,7 +419,11 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
         if (sIsRunning && !mIsInForeground) {
             Notification notification = new NotificationHelper.NotificationFactory(this)
                     .getNotification("Tracking", "Running", null, null, null);
-            super.startForeground(NOTIFICATION_ID, notification);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                super.startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION);
+            } else {
+                super.startForeground(NOTIFICATION_ID, notification);
+            }
             mIsInForeground = true;
         }
     }
@@ -429,6 +466,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     }
 
     public static boolean isRunning() {
+        Log.d("BGGeo", "✅ LocationServiceImpl.isRunning() = " + sIsRunning);
         return sIsRunning;
     }
 

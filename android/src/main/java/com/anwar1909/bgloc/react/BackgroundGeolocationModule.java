@@ -1,6 +1,7 @@
 package com.anwar1909.bgloc.react;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -145,6 +146,10 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
 
     @ReactMethod
     public void start() {
+        if (!facade.isConfigured()) {
+            Log.e("BGGeo", "❌ start() called before configure(). Start aborted.");
+            return;
+        }
         facade.start();
     }
 
@@ -160,6 +165,7 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
 
     @ReactMethod
     public void configure(final ReadableMap options, final Callback success, final Callback error) {
+        Log.d("BGGeo", "✅ BackgroundGeolocationModule -> configure() dipanggil dari JS");
         runOnBackgroundThread(new Runnable() {
             @Override
             public void run() {
