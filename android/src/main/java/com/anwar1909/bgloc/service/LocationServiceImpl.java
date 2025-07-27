@@ -257,6 +257,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
             return;
         }
 
+        Log.d("BGGeo", "⚠️ Existing mConfig di LocationServiceImpl.start(): " + mConfig);
         if (mConfig == null) {
             Log.d("BGGeo", "⚠️ Config is null");
             logger.warn("Starting with default config");
@@ -270,7 +271,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
         try{
             LocationProviderFactory spf = sLocationProviderFactory != null ? sLocationProviderFactory : new LocationProviderFactory(this);
             Log.d("BGGeo", "✅ Created LocationProviderFactory");
-            mProvider = spf.getInstance(mConfig.getLocationProvider());
+            mProvider = spf.getInstance(mConfig.getLocationProvider(), mConfig);
             Log.d("BGGeo", "✅ mProvider created: " + mProvider.getClass().getSimpleName());
             mProvider.setDelegate(this);
             mProvider.onCreate();
@@ -293,7 +294,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
             bundle.putLong("serviceId", mServiceId);
             broadcastMessage(bundle);
         } catch (Exception e) {
-            Log.e("BGGeo", "❌ Error in start(): " + e.getMessage(), e);
+            Log.d("BGGeo", "❌ Error in start(): " + e.getMessage(), e);
         }
     }
 
@@ -320,7 +321,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public void onLocation(BackgroundLocation location) {
-        logger.debug("New location {}", location.toString());
+        Log.d("BGGeo:"," New location {}"+ location.toString());
         sendLocationToServer(location);
     }
 
@@ -370,7 +371,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public void onStationary(BackgroundLocation location) {
-        logger.debug("Stationary location {}", location.toString());
+        Log.d("BGGeo:","Stationary location {}"+ location.toString());
         sendLocationToServer(location);
     }
 
@@ -457,7 +458,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     private final BroadcastReceiver connectivityChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            logger.info("Network condition changed");
+            Log.d("BGGeo", "Network condition changed"+intent);
         }
     };
 

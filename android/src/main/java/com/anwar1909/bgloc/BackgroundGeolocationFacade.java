@@ -191,12 +191,12 @@ public class BackgroundGeolocationFacade {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private synchronized void registerLocationModeChangeReceiver() {
-        logger.debug("BackgroundGeolocationFacade->registerLocationModeChangeReceiver: "+mLocationModeChangeReceiverRegistered);
+        logger.trace("BackgroundGeolocationFacade->registerLocationModeChangeReceiver: "+mLocationModeChangeReceiverRegistered);
         if (mLocationModeChangeReceiverRegistered) return;
 
         getContext().registerReceiver(locationModeChangeReceiver, new IntentFilter(android.location.LocationManager.MODE_CHANGED_ACTION));
         mLocationModeChangeReceiverRegistered = true;
-        logger.debug("BackgroundGeolocationFacade->registerLocationModeChangeReceiver: Next "+mLocationModeChangeReceiverRegistered);
+        logger.trace("BackgroundGeolocationFacade->registerLocationModeChangeReceiver: Next "+mLocationModeChangeReceiverRegistered);
     }
 
     private synchronized void unregisterLocationModeChangeReceiver() {
@@ -255,11 +255,11 @@ public class BackgroundGeolocationFacade {
 
     public void start() {
         logger.debug("BackgroundGeolocationFacade: Starting service");
-        Log.d("BGGeo", "✅ BackgroundGeolocationFacade -> start() called");
+        logger.trace("BGGeo", "✅ BackgroundGeolocationFacade -> start() called");
 
         if (mService != null && mConfig != null) {
             try {
-                Log.d("BGGeo", "✅ Sending config to LocationServiceImpl before start");
+                logger.trace("BGGeo", "✅ Sending config to LocationServiceImpl before start");
                 mService.configure(mConfig); // ⬅️ ⬅️ ⬅️ INI WAJIB
             } catch (Exception e) {
                 Log.e("BGGeo", "❌ Error during mService.configure: " + e.getMessage(), e);
@@ -432,7 +432,8 @@ public class BackgroundGeolocationFacade {
     }
 
     public synchronized void configure(Config config) throws PluginException {
-        Log.d("BGGeo", "✅ BackgroundGeolocationFacade -> configure() called with config: " + config.toString());
+        logger.trace("BGGeo", "✅ BackgroundGeolocationFacade -> configure() called with config: " + config.toString());
+        logger.trace("BGGeo", "✅ BGFacade.configure() menerima: " + config);
         // try
         // {
         //     Config newConfig = Config.merge(getStoredConfig(), config);

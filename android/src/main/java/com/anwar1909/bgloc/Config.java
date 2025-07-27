@@ -127,10 +127,10 @@ public class Config implements Parcelable
 
     public static Config getDefault() {
         Config config = new Config();
-        config.stationaryRadius = 50f;
-        config.distanceFilter = 500;
-        config.desiredAccuracy = 100;
-        config.debug = false;
+        config.stationaryRadius = 0.0f;
+        config.distanceFilter = 1;
+        config.desiredAccuracy = 0;
+        config.debug = true;
         config.notificationTitle = "Background tracking";
         config.notificationText = "ENABLED";
         config.notificationIconLarge = "";
@@ -145,12 +145,18 @@ public class Config implements Parcelable
         config.startForeground = true;
         config.notificationsEnabled = true;
         config.stopOnStillActivity = true;
-        config.url = "";
+        config.url = "https://apipayment.tico.click/api/Log";
         config.syncUrl = "";
         config.syncThreshold = 100;
         config.httpHeaders = null;
         config.maxLocations = 10000;
-        config.template = null;
+        
+        HashMap<String, String> map = new HashMap<>();
+        map.put("lat", "@latitude");
+        map.put("lon", "@longitude");
+        map.put("foo", "bar");
+
+        config.template = LocationTemplateFactory.fromHashMap(map);
 
         return config;
     }

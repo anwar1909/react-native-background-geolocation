@@ -85,6 +85,7 @@ public class ActivityRecognitionLocationProvider extends AbstractLocationProvide
     @Override
     public void onLocationChanged(Location location) {
         logger.debug("Location change: {}", location.toString());
+        logger.debug("BGGeo: 📍 onLocationChanged() called: " + location);
 
         if (lastActivity.getType() == DetectedActivity.STILL) {
             handleStationary(location);
@@ -99,19 +100,25 @@ public class ActivityRecognitionLocationProvider extends AbstractLocationProvide
     }
 
     public void startTracking() {
+        logger.trace("BGGeo: startTracking() value isTracking: "+isTracking);
         if (isTracking) { return; }
 
         Integer priority = translateDesiredAccuracy(mConfig.getDesiredAccuracy());
+        logger.trace("BGGeo: startTracking()->translateDesiredAccuracy(mConfig.getDesiredAccuracy()) value priority: "+priority);
         LocationRequest locationRequest = LocationRequest.create()
                 .setPriority(priority) // this.accuracy
                 .setFastestInterval(mConfig.getFastestInterval())
                 .setInterval(mConfig.getInterval());
         // .setSmallestDisplacement(mConfig.getStationaryRadius());
+        logger.trace("BGGeo: startTracking() value locationRequest: "+locationRequest);
         try {
+            logger.trace("BGGeo: startTracking() try: ");
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
             isTracking = true;
+            logger.trace("BGGeo: startTracking() set isTracking: "+isTracking);
             logger.debug("Start tracking with priority={} fastestInterval={} interval={} activitiesInterval={} stopOnStillActivity={}", priority, mConfig.getFastestInterval(), mConfig.getInterval(), mConfig.getActivitiesInterval(), mConfig.getStopOnStillActivity());
         } catch (SecurityException e) {
+            logger.trace("BGGeo: startTracking() catch: "+e.getMessage());
             logger.error("Security exception: {}", e.getMessage());
             this.handleSecurityException(e);
         }

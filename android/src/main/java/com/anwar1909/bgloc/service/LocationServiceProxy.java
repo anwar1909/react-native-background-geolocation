@@ -3,6 +3,7 @@ package com.anwar1909.bgloc.service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import com.anwar1909.bgloc.Config;
 import com.anwar1909.bgloc.BackgroundGeolocationFacade;
@@ -23,6 +24,7 @@ public class LocationServiceProxy implements LocationService, LocationServiceInf
         // https://github.com/mauron85/react-native-background-geolocation/issues/360
         // https://github.com/mauron85/cordova-plugin-background-geolocation/issues/551
         // https://github.com/mauron85/cordova-plugin-background-geolocation/issues/552
+        Log.v("BGGeo", "✅ LocationServiceProxy -> configure(): " + isStarted());
         if (!isStarted()) { return; }
 
         Intent intent = mIntentBuilder
@@ -71,7 +73,7 @@ public class LocationServiceProxy implements LocationService, LocationServiceInf
         if (config != null) {
         // Kirim CONFIGURE dulu
         Intent configIntent = mIntentBuilder.setCommand(CommandId.CONFIGURE, config).build();
-            Log.d("BGGeo", "✅ LocationServiceProxy -> start(): Sending CONFIGURE with config");
+            Log.v("BGGeo", "✅ LocationServiceProxy -> start(): Sending CONFIGURE with config");
             executeIntentCommand(configIntent);
         } else {
             Log.w("BGGeo", "⚠️ LocationServiceProxy -> start(): Config is null, skip CONFIGURE");
@@ -79,6 +81,7 @@ public class LocationServiceProxy implements LocationService, LocationServiceInf
         Intent intent = mIntentBuilder.setCommand(CommandId.START).build();
 //        intent.addFlags(Intent.FLAG_FROM_BACKGROUND);
         // start service to keep service running even if no clients are bound to it
+        Log.v("BGGeo", "✅ LocationServiceProxy -> start() called with intent: " + intent);
         executeIntentCommand(intent);
     }
 
@@ -119,6 +122,7 @@ public class LocationServiceProxy implements LocationService, LocationServiceInf
     @Override
     public boolean isStarted() {
         LocationServiceInfo serviceInfo = new LocationServiceInfoImpl(mContext);
+        Log.v("BGGeo", "✅ LocationServiceProxy -> isStarted(): " + serviceInfo.isStarted());
         return serviceInfo.isStarted();
     }
 
@@ -136,6 +140,7 @@ public class LocationServiceProxy implements LocationService, LocationServiceInf
     }
 
     private void executeIntentCommand(Intent intent) {
+        Log.v("LocationServiceProxy", "executeIntentCommand(Intent intent) "+intent.toString());
         mContext.startService(intent);
     }
 }

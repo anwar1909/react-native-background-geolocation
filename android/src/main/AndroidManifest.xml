@@ -26,6 +26,16 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name="com.anwar1909.bgloc.MyBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.tenforwardconsulting.cordova.bgloc.STATIONARY_ALARM_ACTION" />
+                <action android:name="com.tenforwardconsulting.cordova.bgloc.STATIONARY_REGION_ACTION" />
+                <action android:name="com.tenforwardconsulting.cordova.bgloc.SINGLE_LOCATION_UPDATE_ACTION" />
+                <action android:name="com.tenforwardconsulting.cordova.bgloc.STATIONARY_LOCATION_MONITOR_ACTION" />
+            </intent-filter>
+        </receiver>
         <!-- <receiver
             android:name="com.anwar1909.bgloc.ActivityRecognitionReceiver"
             android:enabled="true"
@@ -42,5 +52,6 @@
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 </manifest>

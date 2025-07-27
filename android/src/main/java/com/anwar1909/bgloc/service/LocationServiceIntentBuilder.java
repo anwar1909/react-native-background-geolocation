@@ -191,17 +191,17 @@ public class LocationServiceIntentBuilder {
 
     public static boolean containsCommand(Intent intent) {
         if (intent == null) {
-            Log.e("BGGeo", "❌ containsCommand(): intent is null");
+            Log.v("BGGeo", "❌ containsCommand(): intent is null");
             return false;
         }
         boolean has = intent.hasExtra(KEY_COMMAND);
-        Log.d("BGGeo", "📦 containsCommand(): " + has + " - " + intent);
+        Log.v("BGGeo", "📦 containsCommand(): " + has + " - " + intent);
         return has;
     }
 
     public static boolean containsMessage(Intent intent) {
         if (intent == null) {
-            Log.e("BGGeo", "❌ containsMessage(): intent is null");
+            Log.v("BGGeo", "❌ containsMessage(): intent is null");
             return false;
         }
         return intent.hasExtra(KEY_MESSAGE);
@@ -209,21 +209,21 @@ public class LocationServiceIntentBuilder {
 
     public static Command getCommand(Intent intent) {
         if (intent == null) {
-            Log.e("BGGeo", "❌ getCommand(): intent is null");
+            Log.v("BGGeo", "❌ getCommand(): intent is null");
             return null;
         }
         Bundle bundle = intent.getBundleExtra(KEY_COMMAND);
         if (bundle == null) {
-            Log.e("BGGeo", "❌ getCommand(): KEY_COMMAND not found in intent");
+            Log.v("BGGeo", "❌ getCommand(): KEY_COMMAND not found in intent");
             return null;
         }
-        Log.d("BGGeo", "✅ getCommand(): " + bundle);
+        Log.v("BGGeo", "✅ getCommand(): " + bundle);
         return Command.from(bundle);
     }
 
     public static String getMessage(Intent intent) {
         if (intent == null) {
-            Log.e("BGGeo", "❌ getMessage(): intent is null");
+            Log.v("BGGeo", "❌ getMessage(): intent is null");
             return null;
         }
         return intent.getStringExtra(KEY_MESSAGE);
