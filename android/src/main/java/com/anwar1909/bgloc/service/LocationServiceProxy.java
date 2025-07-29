@@ -1,31 +1,44 @@
 package com.anwar1909.bgloc.service;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
+import android.os.IBinder;
 import android.util.Log;
 
-import com.anwar1909.bgloc.Config;
 import com.anwar1909.bgloc.BackgroundGeolocationFacade;
+import com.anwar1909.bgloc.Config;
 
 public class LocationServiceProxy implements LocationService, LocationServiceInfo {
     private final Context mContext;
     private final LocationServiceIntentBuilder mIntentBuilder;
+    private LocationServiceConnection mServiceConnection;
+    private Config mConfig;
 
     public LocationServiceProxy(Context context) {
         mContext = context;
         mIntentBuilder = new LocationServiceIntentBuilder(context);
     }
 
+    public void bindService(Context context) {
+        if (mServiceConnection == null) {
+            mServiceConnection = new LocationServiceConnection();
+            Intent intent = new Intent(context, LocationServiceImpl.class);
+            intent.putExtra("config", mConfig);
+            context.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+            Log.d("BGGeo", "🔗 bindService() berhasil dipanggil");
+        }
+    }
+
     @Override
     public void configure(Config config) {
-        // do not start service if it was not already started
-        // FIXES:
-        // https://github.com/mauron85/react-native-background-geolocation/issues/360
-        // https://github.com/mauron85/cordova-plugin-background-geolocation/issues/551
-        // https://github.com/mauron85/cordova-plugin-background-geolocation/issues/552
         Log.v("BGGeo", "✅ LocationServiceProxy -> configure(): " + isStarted());
-        if (!isStarted()) { return; }
+        if (!isStarted()) {
+            Log.v("BGGeo", "✅ LocationServiceProxy -> configure() tidak ada isStarted(): ");
+            return;
+        }
 
         Intent intent = mIntentBuilder
                 .setCommand(CommandId.CONFIGURE, config)
@@ -34,36 +47,22 @@ public class LocationServiceProxy implements LocationService, LocationServiceInf
     }
 
     @Override
-    public void registerHeadlessTask(String taskRunnerClass) {
-        Intent intent = mIntentBuilder
-                .setCommand(CommandId.REGISTER_HEADLESS_TASK, taskRunnerClass)
-                .build();
-        executeIntentCommand(intent);
-    }
+    public void setConfig(Config config) {
+        Log.d("BGGeo", "📦 LocationServiceProxy.setConfig() dipanggil");
 
-    @Override
-    public void startHeadlessTask() {
-        if (!isStarted()) { return; }
-
-        Intent intent = mIntentBuilder
-                .setCommand(CommandId.START_HEADLESS_TASK)
-                .build();
-        executeIntentCommand(intent);
-    }
-
-    @Override
-    public void stopHeadlessTask() {
-        if (!isStarted()) { return; }
-
-        Intent intent = mIntentBuilder
-                .setCommand(CommandId.STOP_HEADLESS_TASK)
-                .build();
-        executeIntentCommand(intent);
-    }
-
-    @Override
-    public void executeProviderCommand(int command, int arg) {
-        // TODO
+        if (mServiceConnection != null) {
+            LocationService service = mServiceConnection.getService();
+            if (service != null) {
+                Log.d("BGGeo", "✅ Service sudah terhubung, kirim config langsung");
+                service.setConfig(config);
+                service.configure(config);
+            } else {
+                Log.d("BGGeo", "⏳ Service belum terhubung, simpan config sementara");
+                mServiceConnection.setPendingConfig(config);
+            }
+        } else {
+            Log.w("BGGeo", "❌ mServiceConnection null di setConfig");
+        }
     }
 
     @Override
@@ -71,17 +70,14 @@ public class LocationServiceProxy implements LocationService, LocationServiceInf
         BackgroundGeolocationFacade facade = BackgroundGeolocationFacade.getInstance(mContext);
         Config config = facade.getConfig();
         if (config != null) {
-        // Kirim CONFIGURE dulu
-        Intent configIntent = mIntentBuilder.setCommand(CommandId.CONFIGURE, config).build();
-            Log.v("BGGeo", "✅ LocationServiceProxy -> start(): Sending CONFIGURE with config");
+            Intent configIntent = mIntentBuilder.setCommand(CommandId.CONFIGURE, config).build();
+            Log.d("BGGeo", "✅ LocationServiceProxy -> start(): Sending CONFIGURE with config");
             executeIntentCommand(configIntent);
         } else {
             Log.w("BGGeo", "⚠️ LocationServiceProxy -> start(): Config is null, skip CONFIGURE");
         }
         Intent intent = mIntentBuilder.setCommand(CommandId.START).build();
-//        intent.addFlags(Intent.FLAG_FROM_BACKGROUND);
-        // start service to keep service running even if no clients are bound to it
-        Log.v("BGGeo", "✅ LocationServiceProxy -> start() called with intent: " + intent);
+        Log.d("BGGeo", "✅ LocationServiceProxy -> start() called with intent: " + intent);
         executeIntentCommand(intent);
     }
 
@@ -97,50 +93,105 @@ public class LocationServiceProxy implements LocationService, LocationServiceInf
 
     @Override
     public void stop() {
-        if (!isStarted()) { return; }
-
+        if (!isStarted()) return;
         Intent intent = mIntentBuilder.setCommand(CommandId.STOP).build();
         executeIntentCommand(intent);
     }
 
     @Override
     public void stopForeground() {
-        if (!isStarted()) { return; }
-
+        if (!isStarted()) return;
         Intent intent = mIntentBuilder.setCommand(CommandId.STOP_FOREGROUND).build();
         executeIntentCommand(intent);
     }
 
     @Override
     public void startForeground() {
-        if (!isStarted()) { return; }
-
+        if (!isStarted()) return;
         Intent intent = mIntentBuilder.setCommand(CommandId.START_FOREGROUND).build();
         executeIntentCommand(intent);
     }
 
     @Override
-    public boolean isStarted() {
-        LocationServiceInfo serviceInfo = new LocationServiceInfoImpl(mContext);
-        Log.v("BGGeo", "✅ LocationServiceProxy -> isStarted(): " + serviceInfo.isStarted());
-        return serviceInfo.isStarted();
+    public void registerHeadlessTask(String taskRunnerClass) {
+        Intent intent = mIntentBuilder.setCommand(CommandId.REGISTER_HEADLESS_TASK, taskRunnerClass).build();
+        executeIntentCommand(intent);
     }
 
-    public boolean isRunning() {
-        if (isStarted()) {
-            return LocationServiceImpl.isRunning();
-        }
-        return false;
+    @Override
+    public void startHeadlessTask() {
+        if (!isStarted()) return;
+        Intent intent = mIntentBuilder.setCommand(CommandId.START_HEADLESS_TASK).build();
+        executeIntentCommand(intent);
+    }
+
+    @Override
+    public void stopHeadlessTask() {
+        if (!isStarted()) return;
+        Intent intent = mIntentBuilder.setCommand(CommandId.STOP_HEADLESS_TASK).build();
+        executeIntentCommand(intent);
+    }
+
+    @Override
+    public void executeProviderCommand(int command, int arg) {
+        // Optional
+    }
+
+    @Override
+    public boolean isStarted() {
+        return new LocationServiceInfoImpl(mContext).isStarted();
     }
 
     @Override
     public boolean isBound() {
-        LocationServiceInfo serviceInfo = new LocationServiceInfoImpl(mContext);
-        return serviceInfo.isBound();
+        return new LocationServiceInfoImpl(mContext).isBound();
+    }
+
+    public boolean isRunning() {
+        return isStarted() && LocationServiceImpl.isRunning();
     }
 
     private void executeIntentCommand(Intent intent) {
-        Log.v("LocationServiceProxy", "executeIntentCommand(Intent intent) "+intent.toString());
+        Log.v("LocationServiceProxy", "executeIntentCommand(Intent intent) " + intent);
         mContext.startService(intent);
+    }
+
+    public LocationService getConnectedService() {
+        return mServiceConnection != null ? mServiceConnection.getService() : null;
+    }
+
+    // INNER CLASS
+    private class LocationServiceConnection implements ServiceConnection {
+        private LocationService mService;
+        private Config pendingConfig;
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            if (binder instanceof LocationServiceImpl.ServiceBinder) {
+                mService = ((LocationServiceImpl.ServiceBinder) binder).getService();
+                Log.d("BGGeo", "✅ onServiceConnected: service terhubung");
+
+                if (pendingConfig != null) {
+                    Log.d("BGGeo", "📦 Mengirim pendingConfig ke service");
+                    mService.setConfig(pendingConfig);
+                    mService.configure(pendingConfig);
+                    pendingConfig = null;
+                }
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+            Log.d("BGGeo", "⚠️ onServiceDisconnected: service terputus");
+        }
+
+        public LocationService getService() {
+            return mService;
+        }
+
+        public void setPendingConfig(Config config) {
+            pendingConfig = config;
+        }
     }
 }

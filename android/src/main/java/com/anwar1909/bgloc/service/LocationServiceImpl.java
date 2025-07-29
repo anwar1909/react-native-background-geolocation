@@ -8,6 +8,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Binder;
@@ -27,9 +29,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.anwar1909.bgloc.BackgroundGeolocationFacade;
 import com.anwar1909.bgloc.Config;
 import com.anwar1909.bgloc.ConnectivityListener;
 import com.anwar1909.bgloc.PluginException;
+import com.anwar1909.bgloc.PluginDelegate;
 import com.anwar1909.bgloc.ResourceResolver;
 import com.anwar1909.bgloc.data.BackgroundActivity;
 import com.anwar1909.bgloc.data.BackgroundLocation;
@@ -44,6 +48,7 @@ import com.anwar1909.bgloc.headless.TaskRunnerFactory;
 import com.anwar1909.bgloc.provider.LocationProvider;
 import com.anwar1909.bgloc.provider.LocationProviderFactory;
 import com.anwar1909.bgloc.provider.ProviderDelegate;
+import com.anwar1909.bgloc.react.BackgroundGeolocationModule;
 import com.anwar1909.bgloc.sync.NotificationHelper;
 import com.anwar1909.bgloc.logging.LoggerManager;
 import com.anwar1909.bgloc.logging.UncaughtExceptionLogger;
@@ -105,7 +110,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     private org.slf4j.Logger logger;
 
-    private final IBinder mBinder = new LocalBinder();
+    // private final IBinder mBinder = new LocalBinder();
     private HandlerThread mHandlerThread;
     private ServiceHandler mServiceHandler;
 
@@ -115,6 +120,19 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     private static LocationTransform sLocationTransform;
     private static LocationProviderFactory sLocationProviderFactory;
+    private PluginDelegate mPluginDelegate;
+    private static PluginDelegate sPluginDelegate;
+    private final IBinder mBinder = new ServiceBinder();
+
+    public class ServiceBinder extends Binder {
+        public LocationService getService() {
+            return LocationServiceImpl.this;
+        }
+    }
+
+    public static void setPluginDelegate(PluginDelegate delegate) {
+        sPluginDelegate = delegate;
+    }
 
     private class ServiceHandler extends Handler {
         public ServiceHandler(Looper looper) {
@@ -202,6 +220,14 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && intent.hasExtra("config")) {
+            Config config = intent.getParcelableExtra("config");
+            Log.d("TAG", "Will start service with custom config: " + config.toString());
+            this.configure(config);
+        } else {
+            Log.d("TAG", "Will start service with: default config");
+        }
+
         Log.d("BGGeo", "✅ LocationServiceImpl -> onStartCommand invoked");
         Log.d("BGGeo", "Intent action: " + (intent != null ? intent.getAction() : "null"));
         Log.d("BGGeo", "containsCommand: " + containsCommand(intent));
@@ -214,7 +240,18 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
         if (containsCommand(intent)) {
             LocationServiceIntentBuilder.Command cmd = getCommand(intent);
             if (cmd != null) {
-                processCommand(cmd.getId(), cmd.getArgument());
+                if (cmd.getId() == CommandId.START) {
+                    if (cmd.getArgument() instanceof Config) {
+                        this.mConfig = (Config) cmd.getArgument();
+                        Log.d("BGGeo", "✅ mConfig diambil dari intent: " + mConfig.toString());
+                    } else {
+                        Log.w("BGGeo", "⚠️ START arg bukan Config: " + cmd.getArgument());
+                    }
+                    start();
+                    return START_STICKY;
+                } else {
+                    processCommand(cmd.getId(), cmd.getArgument());
+                }
             } else {
                 logger.warn("⚠️ Command is null, skipping");
             }
@@ -250,11 +287,22 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     }
 
     @Override
+    public void bindService(Context context) {
+    }
+
+    @Override
     public synchronized void start() {
         Log.d("BGGeo", "🚀 LocationServiceImpl -> start() called");
         if (sIsRunning) {
             Log.d("BGGeo", "⚠️ Already running, skip");
             return;
+        }
+
+        // 🛠 Tambahkan ini untuk memastikan mConfig selalu terisi
+        if (mConfig == null) {
+            Log.d("BGGeo", "⚠️ mConfig is null, ambil dari facade.getConfig()");
+            // mConfig = BackgroundGeolocationFacade.getInstance(this).getConfig();
+            mConfig = BackgroundGeolocationFacade.getStaticConfig();
         }
 
         Log.d("BGGeo", "⚠️ Existing mConfig di LocationServiceImpl.start(): " + mConfig);
@@ -266,7 +314,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
         }
 
         Log.d("BGGeo", "✅ Will start service with config: " + mConfig.toString());
-        logger.debug("Will start service with: {}", mConfig.toString());
+        logger.debug("Will start service withz: ", mConfig.toString());
 
         try{
             LocationProviderFactory spf = sLocationProviderFactory != null ? sLocationProviderFactory : new LocationProviderFactory(this);
@@ -299,6 +347,12 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     }
 
     @Override
+    public void setConfig(Config config) {
+        Log.d("BGGeo", "🛠 setConfig() dipanggil dengan config: " + config.getUrl());
+        this.mConfig = config;
+    }
+
+    @Override
     public synchronized void startForegroundService() {
         start();
         startForeground();
@@ -323,10 +377,27 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     public void onLocation(BackgroundLocation location) {
         Log.d("BGGeo:"," New location {}"+ location.toString());
         sendLocationToServer(location);
+
+        if (sPluginDelegate != null) {
+            sPluginDelegate.onLocationChanged(location); // <--- ini trigger JS
+        }
     }
 
     private void sendLocationToServer(BackgroundLocation location) {
-        if (mConfig == null || mConfig.getUrl() == null) return;
+        Log.d("BGGeo", "🧪 sendLocationToServer() dipanggil");
+
+        if (mConfig == null) {
+            Log.e("BGGeo", "❌ mConfig is NULL di sendLocationToServer()");
+            return;
+        }
+
+        if (mConfig.getUrl() == null || mConfig.getUrl().isEmpty()) {
+            Log.e("BGGeo", "❌ URL di mConfig adalah null / kosong: " + mConfig.getUrl());
+            return;
+        }
+
+        Log.d("BGGeo", "🌐 Akan kirim ke URL: " + mConfig.getUrl());
+        // if (mConfig == null || mConfig.getUrl() == null) return;
 
         try {
             JSONObject data = new JSONObject();
@@ -335,8 +406,22 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
             RequestQueue queue = Volley.newRequestQueue(this);
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, mConfig.getUrl(), data,
-                    response -> logger.debug("Location sent: " + response.toString()),
-                    error -> logger.error("Failed to send location: {}", error.getMessage())
+                response -> {
+                    logger.debug("Location sent: " + response.toString());
+
+                    BackgroundGeolocationModule module = BackgroundGeolocationModule.getInstance();
+                    if (module != null) {
+                        module.onHttpResponse("✅ Your server callback: " + response.toString());
+                    }
+                },
+                error -> {
+                    logger.error("Failed to send location: {}", error.getMessage());
+
+                    BackgroundGeolocationModule module = BackgroundGeolocationModule.getInstance();
+                    if (module != null) {
+                        module.onHttpResponse("❌ Error server callback: " + error.getMessage());
+                    }
+                }
             ) {
                 @Override
                 public Map<String, String> getHeaders() {
@@ -364,8 +449,8 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public synchronized void configure(Config config) {
+        Log.d("BGGeo", "✅ LocationServiceImpl menerima config: " + config.getUrl());
         if (config.getInterval() == null) config.setInterval(10000);
-        Log.d("BGGeo", "⚙️ Reconfigured with: " + config.toString());
         this.mConfig = config;
     }
 

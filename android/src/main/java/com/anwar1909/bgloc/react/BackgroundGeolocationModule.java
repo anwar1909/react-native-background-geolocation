@@ -22,6 +22,7 @@ import com.anwar1909.bgloc.data.BackgroundActivity;
 import com.anwar1909.bgloc.data.BackgroundLocation;
 import com.anwar1909.bgloc.react.data.LocationMapper;
 import com.anwar1909.bgloc.react.headless.HeadlessTaskRunner;
+import com.anwar1909.bgloc.react.ConfigMapper;
 import com.anwar1909.bgloc.logging.LogEntry;
 import com.anwar1909.bgloc.logging.LoggerManager;
 
@@ -43,10 +44,12 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
     public static final String STOP_EVENT = "stop";
     public static final String ABORT_REQUESTED_EVENT = "abort_requested";
     public static final String HTTP_AUTHORIZATION_EVENT = "http_authorization";
+    public static final String HTTP_EVENT = "http";
     public static final String ERROR_EVENT = "error";
 
     private static final int PERMISSIONS_REQUEST_CODE = 1;
 
+    private static BackgroundGeolocationModule instance;
     private BackgroundGeolocationFacade facade;
     private org.slf4j.Logger logger;
     private ReactContext currentContext;
@@ -87,7 +90,9 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
 
     public BackgroundGeolocationModule(ReactApplicationContext reactContext) {
         super(reactContext);
+        instance = this;
         currentContext = reactContext;
+        Log.v("NewBG", "isi contect "+ currentContext);
         currentContext.addLifecycleEventListener(this);
 
         facade = new BackgroundGeolocationFacade(currentContext, this);
@@ -132,16 +137,36 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
     }
 
     @Override
-    public void onCatalystInstanceDestroy() {
-        super.onCatalystInstanceDestroy();
+    public void invalidate() {
+        super.invalidate();
+        // bersihkan resource di sini
         logger.info("Destroying plugin facade");
         facade.destroy();
     }
+
+    // @Override
+    // public void onCatalystInstanceDestroy() {
+    //     super.onCatalystInstanceDestroy();
+    //     logger.info("Destroying plugin facade");
+    //     facade.destroy();
+    // }
 
     private void runOnBackgroundThread(Runnable runnable) {
         // currently react-native has no other thread we can run on
         new Thread(runnable).start();
     }
+
+    // public void sendHttpEvent(String message) {
+    //     WritableMap params = Arguments.createMap();
+    //     params.putString("message", message);
+
+    //     ReactContext context = getReactApplicationContext();
+    //     if (context != null && context.hasActiveCatalystInstance()) {
+    //         context
+    //             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+    //             .emit(HTTP_EVENT, params);
+    //     }
+    // }
 
 
     @ReactMethod
@@ -150,6 +175,7 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
             Log.e("BGGeo", "❌ start() called before configure(). Start aborted.");
             return;
         }
+        facade.setPluginDelegate(this);
         facade.start();
     }
 
@@ -165,12 +191,13 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
 
     @ReactMethod
     public void configure(final ReadableMap options, final Callback success, final Callback error) {
-        Log.d("BGGeo", "✅ BackgroundGeolocationModule -> configure() dipanggil dari JS");
+        Log.d("BGGeo", "🔥 configure() dipanggil dari JS, isi: " + options.toString());
         runOnBackgroundThread(new Runnable() {
             @Override
             public void run() {
                 try {
                     Config config = ConfigMapper.fromMap(options);
+                    logger.trace("NewBG: isi dari option "+config);
                     facade.configure(config);
                     success.invoke(true);
                 } catch (JSONException e) {
@@ -358,7 +385,7 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
         success.invoke(true);
     }
 
-    private void sendEvent(String eventName, Object params) {
+    public void sendEvent(String eventName, Object params) {
         try {
             currentContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                     .emit(eventName, params);
@@ -401,6 +428,7 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
 
     @Override
     public void onLocationChanged(BackgroundLocation location) {
+        // logger.trace("NEWBG: Module menerima lokasi: "+location);
         sendEvent(LOCATION_EVENT, LocationMapper.toWriteableMapWithId(location));
     }
 
@@ -442,5 +470,16 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
     @Override
     public void onHttpAuthorization() {
         sendEvent(HTTP_AUTHORIZATION_EVENT, null);
+    }
+
+    public void onHttpResponse(String message) {
+        logger.trace("NEWBG: Module menerima http event: " + message);
+        WritableMap params = Arguments.createMap();
+        params.putString("message", message);
+        sendEvent(HTTP_EVENT, params);
+    }
+
+    public static BackgroundGeolocationModule getInstance() {
+        return instance;
     }
 }

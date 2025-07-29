@@ -127,9 +127,10 @@ public class Config implements Parcelable
 
     public static Config getDefault() {
         Config config = new Config();
-        config.stationaryRadius = 0.0f;
-        config.distanceFilter = 1;
+        config.stationaryRadius = 10.0f;
+        config.distanceFilter = 10;
         config.desiredAccuracy = 0;
+        // config.debug = false;
         config.debug = true;
         config.notificationTitle = "Background tracking";
         config.notificationText = "ENABLED";
@@ -137,26 +138,31 @@ public class Config implements Parcelable
         config.notificationIconSmall = "";
         config.notificationIconColor = "";
         config.locationProvider = DISTANCE_FILTER_PROVIDER;
-        config.interval = 600000; //milliseconds
-        config.fastestInterval = 120000; //milliseconds
+        config.interval = 10000; //milliseconds
+        config.fastestInterval = 5000; //milliseconds
         config.activitiesInterval = 10000; //milliseconds
         config.stopOnTerminate = true;
         config.startOnBoot = false;
         config.startForeground = true;
         config.notificationsEnabled = true;
         config.stopOnStillActivity = true;
-        config.url = "https://apipayment.tico.click/api/Log";
+        // config.url = "https://apipayment.tico.click/api/Log";
+        config.url = "";
         config.syncUrl = "";
         config.syncThreshold = 100;
         config.httpHeaders = null;
+        // config.httpHeaders = new HashMap<>();
+        // config.httpHeaders.put("Content-Type", "application/json");
+        // config.httpHeaders.put("Authorization", "APIKEY");
+        // config.httpHeaders.put("APIKEY", "acengdulag!");
         config.maxLocations = 10000;
-        
-        HashMap<String, String> map = new HashMap<>();
-        map.put("lat", "@latitude");
-        map.put("lon", "@longitude");
-        map.put("foo", "bar");
+        // HashMap<String, String> map = new HashMap<>();
+        // map.put("lat", "@latitude");
+        // map.put("lon", "@longitude");
+        // map.put("foo", "bar");
 
-        config.template = LocationTemplateFactory.fromHashMap(map);
+        // config.template = LocationTemplateFactory.fromHashMap(map);
+        config.template = null;
 
         return config;
     }

@@ -120,21 +120,21 @@ public class DistanceFilterLocationProvider extends AbstractLocationProvider imp
                 isAcquiringStationaryLocation = true;
             }
 
-            logger.trace("BGGeo: setPace() isAcquiringSpeed=" + isAcquiringSpeed + ", isAcquiringStationaryLocation=" + isAcquiringStationaryLocation);
+            // logger.trace("BGGeo: setPace() isAcquiringSpeed=" + isAcquiringSpeed + ", isAcquiringStationaryLocation=" + isAcquiringStationaryLocation);
 
             if (isAcquiringSpeed || isAcquiringStationaryLocation) {
                 locationAcquisitionAttempts = 0;
                 List<String> matchingProviders = locationManager.getAllProviders();
                 if (matchingProviders == null || matchingProviders.isEmpty()) {
-                    logger.warn("BGGeo: ❌ No location providers available");
+                    // logger.warn("BGGeo: ❌ No location providers available");
                 } else {
                     for (String provider : matchingProviders) {
-                        logger.debug("BGGeo: 📡 Found provider: " + provider);
+                        // logger.debug("BGGeo: 📡 Found provider: " + provider);
                         if (!LocationManager.PASSIVE_PROVIDER.equals(provider)) {
-                            logger.trace("BGGeo: ⚙️ Trying to request location updates for: " + provider);
+                            // logger.trace("BGGeo: ⚙️ Trying to request location updates for: " + provider);
                             try {
                                 locationManager.requestLocationUpdates(provider, 0, 0, this);
-                                logger.trace("BGGeo: ✅ Success request location for: " + provider);
+                                // logger.trace("BGGeo: ✅ Success request location for: " + provider);
                             } catch (SecurityException | IllegalArgumentException e) {
                                 logger.trace("BGGeo: ❌ Failed to request for " + provider + ": " + e.getMessage());
                             }
@@ -167,9 +167,23 @@ public class DistanceFilterLocationProvider extends AbstractLocationProvider imp
 
     @Override
     public void onLocationChanged(Location location) {
-        logger.debug("BGGeo: 📍 onLocationChanged() called: " + location);
-        logger.debug("BGGeo: 📍 Location changed: {}", location);
+        // logger.debug("BGGeo: 📍 onLocationChanged() called: " + location);
+        // logger.debug("BGGeo: 📍 Location changed: {}", location);
         // You can broadcast or send this to server here
+        // if (getPluginDelegate() != null) {
+        //     getPluginDelegate().onLocation(new BackgroundLocation(location), new PluginDelegate.Callback() {
+        //         @Override
+        //         public void onSuccess() {
+        //             logger.debug("BGGeo: ✅ JS location callback success");
+        //         }
+
+        //         @Override
+        //         public void onFailure() {
+        //             logger.warn("BGGeo: ❌ JS location callback failed");
+        //         }
+        //     });
+        // }
+        handleLocation(location);
     }
 
     @Override

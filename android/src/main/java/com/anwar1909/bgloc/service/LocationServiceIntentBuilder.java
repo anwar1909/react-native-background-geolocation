@@ -159,17 +159,23 @@ public class LocationServiceIntentBuilder {
      *     nothing.
      */
     public LocationServiceIntentBuilder setCommand(@CommandId int commandId) {
+        Log.v("BGGeo", "LocationServiceIntentBuilder setCommand(): commandId: "+commandId);
         mCommand = new Command(commandId);
+        Log.v("BGGeo", "LocationServiceIntentBuilder setCommand(): mCommand: "+mCommand);
         return this;
     }
 
     public LocationServiceIntentBuilder setCommand(@CommandId int commandId, String arg) {
+        Log.v("BGGeo", "LocationServiceIntentBuilder setCommand(): String arg: "+arg);
         mCommand = new Command(commandId, arg);
+        Log.v("BGGeo", "LocationServiceIntentBuilder setCommand(): String arg mCommand: "+mCommand);
         return this;
     }
 
     public LocationServiceIntentBuilder setCommand(@CommandId int commandId, Parcelable arg) {
+        Log.v("BGGeo", "LocationServiceIntentBuilder setCommand(): Parcelable arg: "+arg);
         mCommand = new Command(commandId, arg);
+        Log.v("BGGeo", "LocationServiceIntentBuilder setCommand(): Parcelable arg mCommand: "+mCommand);
         return this;
     }
 

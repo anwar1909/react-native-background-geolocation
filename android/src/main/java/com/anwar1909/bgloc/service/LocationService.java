@@ -1,6 +1,7 @@
 package com.anwar1909.bgloc.service;
 
 import com.anwar1909.bgloc.Config;
+import android.content.Context;
 
 public interface LocationService {
     void start();
@@ -13,4 +14,6 @@ public interface LocationService {
     void startHeadlessTask();
     void stopHeadlessTask();
     void executeProviderCommand(int command, int arg);
+    void bindService(Context context);
+    void setConfig(Config config);
 }

@@ -48,6 +48,7 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+import java.lang.reflect.Method;
 
 public class BackgroundGeolocationFacade {
 
@@ -67,8 +68,10 @@ public class BackgroundGeolocationFacade {
     private boolean isConfigured = false;
 
     private Config mConfig;
+    private static Config sConfig;
     private final Context mContext;
     private final PluginDelegate mDelegate;
+    private PluginDelegate pluginDelegate;
     private final LocationService mService;
 
     private BackgroundLocation mStationaryLocation;
@@ -256,6 +259,7 @@ public class BackgroundGeolocationFacade {
     public void start() {
         logger.debug("BackgroundGeolocationFacade: Starting service");
         logger.trace("BGGeo", "✅ BackgroundGeolocationFacade -> start() called");
+        LocationServiceImpl.setPluginDelegate(pluginDelegate);
 
         if (mService != null && mConfig != null) {
             try {
@@ -432,8 +436,7 @@ public class BackgroundGeolocationFacade {
     }
 
     public synchronized void configure(Config config) throws PluginException {
-        logger.trace("BGGeo", "✅ BackgroundGeolocationFacade -> configure() called with config: " + config.toString());
-        logger.trace("BGGeo", "✅ BGFacade.configure() menerima: " + config);
+        logger.debug("Facade menerima config, url: " + config.getUrl());
         // try
         // {
         //     Config newConfig = Config.merge(getStoredConfig(), config);
@@ -447,8 +450,15 @@ public class BackgroundGeolocationFacade {
         // }
         try {
             logger.debug("Service configured with: {}", config.toString());
+            logger.debug("Isi mService: " + mService);
             mConfig = config;
-            mService.configure(config);
+            sConfig = config;
+            if (mService != null) {
+                logger.debug("mContext: "+mContext);
+                mService.bindService(mContext);
+                mService.setConfig(config);
+                mService.configure(config);
+            }
             isConfigured = true;
         } catch (Exception e) {
             logger.error("Configuration error: {}", e.getMessage());
@@ -545,11 +555,36 @@ public class BackgroundGeolocationFacade {
 
     private void startBackgroundService() {
         logger.info("Attempt to start bg service");
+         // Buat Intent untuk memulai service dan kirim config sebagai Bundle
+        if (mService == null) {
+            logger.warn("❌ mService is null, cannot start background service");
+            return;
+        }
+
+        Intent intent = new Intent(mContext, LocationServiceImpl.class);
+        if (mConfig != null) {
+            intent.putExtra("config", mConfig); // Pastikan Config implements Parcelable atau Bundle-able
+            Log.d("BGGeo", "✅ Sending config via Intent to LocationServiceImpl");
+        } else {
+            Log.w("BGGeo", "⚠️ mConfig is null, will not send config");
+        }
+
+        mContext.startService(intent);
+
         if (mIsPaused) {
+            logger.debug("⏸ Service is paused, starting in foreground");
             mService.startForegroundService();
         } else {
+            logger.debug("▶️ Starting service normally");
             mService.start();
         }
+        // if (mIsPaused) {
+        //     mService.startForegroundService();
+        // } else {
+        //     mService.start();
+        // }
+        // Intent intent = LocationServiceIntentBuilder.buildStartIntent(context, config);
+        // context.startService(intent);
         logger.info("BackgroundGeolocationFacade->startBackgroundService(): "+mIsPaused);
     }
 
@@ -616,5 +651,13 @@ public class BackgroundGeolocationFacade {
 
     public static LocationTransform getLocationTransform() {
         return LocationServiceImpl.getLocationTransform();
+    }
+
+    public void setPluginDelegate(PluginDelegate delegate) {
+        pluginDelegate = delegate;
+    }
+
+    public static Config getStaticConfig() {
+        return sConfig;
     }
 }
