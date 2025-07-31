@@ -24,15 +24,19 @@
     "android",
     "ios"
   ],
-  "author": "Anwar 1909",
+  "author": "Marian Hello",
   "maintainers": [
-    "Anwar Sadad <anwar.sadad1909@gmail.com>"
+    "Suman Saurabh",
+    "Viplove Choudhary"
   ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/anwar1909/react-native-background-geolocation/issues"
   },
   "homepage": "https://github.com/anwar1909/react-native-background-geolocation#readme",
+  "dependencies": {
+    "plist": "^3.0.1"
+  },
   "peerDependencies": {
     "react-native": ">=0.60.5"
   }

@@ -1,9 +1,9 @@
 'use strict';
 
-var { DeviceEventEmitter, NativeModules, AppRegistry } = require('react-native');
+var { DeviceEventEmitter, NativeModules, AppRegistry, Platform } = require('react-native');
 var RNBackgroundGeolocation = NativeModules.BackgroundGeolocation;
 var TAG = 'RNBackgroundGeolocation';
-var TASK_KEY = 'com.anwar1909.bgloc.react.headless.Task';
+var TASK_KEY = 'com.marianhello.bgloc.react.headless.Task';
 
 function emptyFn() {}
 function defaultErrorHandler(error) {
@@ -24,13 +24,12 @@ var BackgroundGeolocation = {
     'foreground',
     'background',
     'abort_requested',
-    'http_authorization',
-    'http'
+    'http_authorization'
   ],
 
   DISTANCE_FILTER_PROVIDER: 0,
-  ACTIVITY_PROVIDER: 1,
   RAW_PROVIDER: 2,
+  FUSED_PROVIDER: 3,
 
   BACKGROUND_MODE: 0,
   FOREGROUND_MODE: 1,
@@ -121,7 +120,13 @@ var BackgroundGeolocation = {
     errorFn = errorFn || emptyFn;
     RNBackgroundGeolocation.deleteAllLocations(successFn, errorFn);
   },
-
+  deleteAllLocationsPermanent: function(millisBeforeTimeStamp, successFn, errorFn) {
+    successFn = successFn || emptyFn;
+    errorFn = errorFn || emptyFn;
+    if(Platform.OS === 'android') {
+      RNBackgroundGeolocation.deleteAllLocationsPermanent(millisBeforeTimeStamp, successFn, errorFn);
+    }
+  },
   switchMode: function(modeId, successFn, errorFn) {
     successFn = successFn || emptyFn;
     errorFn = errorFn || emptyFn;
@@ -214,7 +219,13 @@ var BackgroundGeolocation = {
 
     DeviceEventEmitter.removeAllListeners(event);
     return void 0;
-  }
+  },
+
+  startAutostartSettings: () => {
+        if(Platform.OS === 'android') {
+            return RNBackgroundGeolocation.startAutostartSettings()
+        }
+  },
 };
 
 module.exports = BackgroundGeolocation;

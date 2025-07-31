@@ -3,13 +3,13 @@
 // Definitions by: Mauron85 (@mauron85), Norbert Györög (@djereg)
 // Definitions: https://github.com/mauron85/react-native-background-geolocation/blob/master/index.d.ts
 
-type Event = 'location' | 'stationary' | 'activity' | 'start' | 'stop' | 'error' | 'authorization' | 'foreground' | 'background' | 'abort_requested' | 'http_authorization' | 'http';
+type Event = 'location' | 'stationary' | 'activity' | 'start' | 'stop' | 'error' | 'authorization' | 'foreground' | 'background' | 'abort_requested' | 'http_authorization';
 type HeadlessTaskEventName = 'location' | 'stationary' | 'activity';
 type iOSActivityType = 'AutomotiveNavigation' | 'OtherNavigation' | 'Fitness' | 'Other';
 type NativeProvider = 'gps' | 'network' | 'passive' | 'fused';
 type ActivityType = 'IN_VEHICLE' | 'ON_BICYCLE' | 'ON_FOOT' | 'RUNNING' | 'STILL' | 'TILTING' | 'UNKNOWN' | 'WALKING';
 type LogLevel = 'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
-type LocationProvider = 0 | 1 | 2;
+type LocationProvider = 0  | 2 | 3;
 type AuthorizationStatus = 0 | 1 | 2;
 type AccuracyLevel = 0 | 100 | 1000 | 10000 | number;
 type LocationErrorCode = 1 | 2 | 3;
@@ -24,7 +24,7 @@ export interface ConfigureOptions {
    *  DISTANCE_FILTER_PROVIDER,
    *  ACTIVITY_PROVIDER
    *  RAW_PROVIDER
-   *
+   *  FUSED_PROVIDER
    * @default DISTANCE_FILTER_PROVIDER
    * @example
    * { locationProvider: BackgroundGeolocation.RAW_PROVIDER }
@@ -134,6 +134,17 @@ export interface ConfigureOptions {
    * @default 10000
    */
   activitiesInterval?: number;
+
+  /**
+   * Rate in milliseconds at which location will be sent when enters in stationary mode
+   * Value must be Greater than 300000 milliseconds
+   *
+   * Platform: Android
+   * Provider: DISTANCE_FILTER
+   *
+   * @default 0
+   */
+  stationaryInterval?: number;
 
   /**
    * @deprecated Stop location updates, when the STILL activity is detected.
@@ -266,7 +277,7 @@ export interface ConfigureOptions {
    *
    * @default 100
    */
-  syncThreshold?: string;
+  syncThreshold?: number;
 
   /**
    * Optional HTTP headers sent along in HTTP request.
@@ -327,8 +338,14 @@ export interface Location {
   /** Configured location provider. */
   locationProvider: number;
 
-  /** UTC time of this fix, in milliseconds since January 1, 1970. */
+  /** UTC time of this fix, in milliseconds since January 1, 1970. This is device time dependent if location is not coming from GPS. */
   time: number;
+
+  /** UTC time of this fix, in milliseconds since January 1, 1970. */
+  realtime: number;
+
+    /** Time in nano second, since the system was booted */
+  elapsedrealtimenano: number;
 
   /** Latitude, in degrees. */
   latitude: number;
@@ -458,8 +475,8 @@ export interface HeadlessTaskEvent {
 export interface BackgroundGeolocationPlugin {
 
   DISTANCE_FILTER_PROVIDER: LocationProvider;
-  ACTIVITY_PROVIDER: LocationProvider;
   RAW_PROVIDER: LocationProvider;
+  FUSED_PROVIDER: LocationProvider;
 
   BACKGROUND_MODE: ServiceMode;
   FOREGROUND_MODE: ServiceMode;
@@ -618,6 +635,21 @@ export interface BackgroundGeolocationPlugin {
    * @param fail
    */
   deleteAllLocations(
+    success?: () => void,
+    fail?: (error: BackgroundGeolocationError) => void
+  ): void;
+
+  /**
+   * Delete all stored locations before a given timestamp
+   *
+   * Platform: Android
+   *
+   *
+   * @param success
+   * @param fail
+   */
+  deleteAllLocationsPermanent(
+    millisBeforeTimeStamp: number,
     success?: () => void,
     fail?: (error: BackgroundGeolocationError) => void
   ): void;
@@ -885,7 +917,8 @@ export interface BackgroundGeolocationPlugin {
     eventName: 'http_authorization',
     callback: () => void
   ): void;
-
+  
+  startAutostartSettings() : void;
 }
 
 declare const BackgroundGeolocation: BackgroundGeolocationPlugin;

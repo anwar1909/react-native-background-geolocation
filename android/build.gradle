@@ -1,67 +1,42 @@
-plugins {
-    id 'com.android.library'
-    id 'maven-publish'
-}
 
-android {
-    namespace "com.anwar1909.bgloc.react"
-    compileSdkVersion 35
-
-    defaultConfig {
-        minSdkVersion 24
-        targetSdkVersion 34
-        versionCode 1
-        versionName "1.0"
-        consumerProguardFiles 'proguard-rules.pro'
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+buildscript {
+    repositories {
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
+        mavenCentral()
     }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    // Untuk autolinking + resolve AGP plugin >= 8.x
-    publishing {
-        singleVariant("release")
-        singleVariant("debug")
-    }
-
-    lint {
-        abortOnError false
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.4.1'
     }
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-            }
-            debug(MavenPublication) {
-                from components.debug
-            }
+allprojects {
+    repositories {
+        mavenLocal()
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url "$rootDir/../node_modules/react-native/android"
+        }
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
+        mavenCentral()
+        // repo for react-native
+        // https://mvnrepository.com/artifact/com.facebook.react/react-native?repo=springio-plugins-release
+        maven {
+            url 'http://repo.spring.io/plugins-release/'
+            name 'Spring Plugins'
         }
     }
 }
 
-repositories {
-    google()
-    mavenCentral()
-    jcenter() // opsional, sudah deprecated tapi mungkin masih dibutuhkan oleh logback
-    maven { url 'https://jitpack.io' }
+ext {
+    reactNativeLibVersion = "0.55.3"
 }
 
-dependencies {
-    implementation "com.facebook.react:react-native:+"
-    // implementation "org.slf4j:slf4j-api:1.7.25"
-    implementation "androidx.core:core:1.12.0"
-    implementation "androidx.core:core-ktx:1.12.0"
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "androidx.localbroadcastmanager:localbroadcastmanager:1.1.0"
-    implementation "com.google.android.gms:play-services-location:21.0.1"
-    implementation 'com.google.android.gms:play-services-base:18.2.0'
-    implementation "org.slf4j:slf4j-api:1.7.30"
-    implementation "com.github.tony19:logback-android:2.0.0"
-    implementation 'com.android.volley:volley:1.2.1'
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
