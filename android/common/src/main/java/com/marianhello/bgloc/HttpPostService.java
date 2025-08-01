@@ -91,8 +91,6 @@ public class HttpPostService {
             }
         }
 
-        Log.d("HttpPostService", "conn: " + conn);
-
         return conn.getResponseCode();
     }
 
