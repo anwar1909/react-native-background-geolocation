@@ -1,6 +1,7 @@
 package com.marianhello.bgloc;
 
 import android.os.Build;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -89,6 +90,8 @@ public class HttpPostService {
                 os.close();
             }
         }
+
+        Log.d("HttpPostService", "conn: " + conn);
 
         return conn.getResponseCode();
     }

@@ -2,6 +2,7 @@ package com.marianhello.bgloc.service;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.util.Log;
 
 import com.marianhello.bgloc.Config;
 import com.marianhello.bgloc.Setting;
@@ -19,20 +20,24 @@ public class LocationServiceInfoImpl implements LocationServiceInfo {
 
     @Override
     public boolean isStarted() {
+        Log.d("isStarted()", "called mContext: "+mContext);
         SettingDAO settingDao = DAOFactory.createSettingDAO(mContext);
-
+        Log.d("isStarted()", "DAOFactory.createSettingDAO() settingDao: "+settingDao);
         try {
+            Log.d("isStarted()", "try");
             Setting setting = settingDao.retrieveSetting();
+            Log.d("isStarted()", "settingDao.retrieveSetting() setting: "+setting);
             if(setting != null) {
                 return setting.isStarted();
             }
         } catch (JSONException ignored) {
 
         }
-        //ActivityManager.RunningServiceInfo info = getRunningServiceInfo();
-        //if (info != null) {
-        //return info.started;
-        //}
+        Log.d("isStarted()", "catch empty next to return false");
+        // ActivityManager.RunningServiceInfo info = getRunningServiceInfo();
+        // if (info != null) {
+        //     return info.started;
+        // }
         return false;
     }
 

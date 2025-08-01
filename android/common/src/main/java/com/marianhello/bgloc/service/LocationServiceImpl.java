@@ -295,6 +295,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        logger.debug("onStartCommand() startId: {} intent: {} flags: {}", startId, intent, flags);
         if (intent == null || !containsCommand(intent)) {
             // when service was killed and restarted we will restart service
             start();
@@ -302,6 +303,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
         }
 
         boolean containsCommand = containsCommand(intent);
+        logger.debug("onStartCommand() containsCommand: {}", containsCommand);
         logger.debug(
                 String.format("Service in [%s] state. cmdId: [%s]. startId: [%d]",
                         sIsRunning ? "STARTED" : "NOT STARTED",
@@ -326,6 +328,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     }
 
     private void processCommand(int command, Object arg) {
+        logger.debug("processCommand: command: {} arg: {}", command, arg);
         try {
             switch (command) {
                 case CommandId.START:
@@ -363,6 +366,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public synchronized void start() {
+        logger.debug("!Will start service with: {}", mConfig);
         if (sIsRunning) {
             return;
         }
@@ -485,22 +489,30 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public synchronized void configure(Config config) {
+        logger.debug("configure() isi config: {}", config);
+        logger.debug("configure() isi mConfig: {}", mConfig);
         if (mConfig == null) {
             mConfig = config;
+            logger.debug("configure() isi return mConfig==null: {}", mConfig);
             return;
         }
-
+        logger.debug("configure() isi after mConfig!=null: {}", mConfig);
         final Config currentConfig = mConfig;
         mConfig = config;
 
+        logger.debug("configure() isi final Config currentConfig = mConfig: {}", mConfig);
+
         mPostLocationTask.setConfig(mConfig);
 
+        logger.debug("configure() isi mSetting: {}", mSetting);
         if (mSetting == null) {
             logger.warn("Attempt to start unset service. Will use stored or default.");
             mSetting = getSetting();
             // TODO: throw JSONException if config cannot be obtained from db
+            logger.debug("configure()->getSetting() isi mSetting: {}", mSetting);
         }
 
+        logger.debug("configure() isi mSetting.isStarted(): {}", mSetting.isStarted());
         if(!mSetting.isStarted()){
             sIsRunning = false;
         }
@@ -745,6 +757,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     }
 
     public Setting getSetting() {
+        logger.debug("getSetting() called, mSetting: {}", mSetting);
         Setting setting = mSetting;
         if (setting == null) {
             SettingDAO dao = DAOFactory.createSettingDAO(this);
@@ -757,6 +770,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
         if (setting == null) {
             setting = Setting.getDefault();
+            logger.debug("getSetting() Setting.getDefault(): {}", Setting.getDefault());
         }
 
         mSetting = setting;

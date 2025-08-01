@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import androidx.annotation.IntDef;
 
 import java.lang.annotation.Retention;
@@ -77,16 +78,19 @@ public class LocationServiceIntentBuilder {
         private int mArgType = 0;
 
         public Command(int id) {
+            Log.d("Command int", "d: "+id);
             this.mCommandId = id;
         }
 
         public Command(int id, String argument) {
+            Log.d("Command String", "id: "+id+" argument: "+argument);
             mCommandId = id;
             mStringArg = argument;
             mArgType = ARGUMENT_TYPE_STRING;
         }
 
         public Command(int id, Parcelable argument) {
+            Log.d("setCommand Parcelable", "id: "+id+" argument: "+argument);
             mCommandId = id;
             mParcelableArg = argument;
             mArgType = ARGUMENT_TYPE_PARCELABLE;
@@ -158,16 +162,19 @@ public class LocationServiceIntentBuilder {
      *     nothing.
      */
     public LocationServiceIntentBuilder setCommand(@CommandId int commandId) {
+        Log.d("setCommand int", "commandId: "+commandId);
         mCommand = new Command(commandId);
         return this;
     }
 
     public LocationServiceIntentBuilder setCommand(@CommandId int commandId, String arg) {
+        Log.d("setCommand String", "commandId: "+commandId+" arg: "+arg);
         mCommand = new Command(commandId, arg);
         return this;
     }
 
     public LocationServiceIntentBuilder setCommand(@CommandId int commandId, Parcelable arg) {
+        Log.d("setCommand Parcelable", "commandId: "+commandId+" arg: "+arg);
         mCommand = new Command(commandId, arg);
         return this;
     }
@@ -193,7 +200,9 @@ public class LocationServiceIntentBuilder {
     }
 
     public static Command getCommand(Intent intent) {
+        Log.d("LocationServiceIntentBuilder: ", "called intent: "+intent);
         Bundle bundle = intent.getBundleExtra(KEY_COMMAND);
+        Log.d("LocationServiceIntentBuilder: ", "bundle: "+bundle);
         return Command.from(bundle);
     }
 

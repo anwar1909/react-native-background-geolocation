@@ -15,3 +15,17 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Keep all classes and members for location and sync
+-keep class com.marianhello.bgloc.** { *; }
+-keep class com.marianhello.bgloc.data.** { *; }
+-keep class com.marianhello.bgloc.sync.** { *; }
+-keep class android.accounts.** { *; }
+-keep class org.json.** { *; }
+
+# Prevent obfuscation for any class accessed via reflection
+-keepnames class * {
+    public <init>(...);
+}
+-keepattributes Signature
+-keepattributes *Annotation*

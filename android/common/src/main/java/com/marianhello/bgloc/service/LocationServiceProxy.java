@@ -3,6 +3,7 @@ package com.marianhello.bgloc.service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import com.marianhello.bgloc.Config;
 import com.marianhello.bgloc.Setting;
@@ -18,6 +19,7 @@ public class LocationServiceProxy implements LocationService, LocationServiceInf
 
     @Override
     public void configure(Config config) {
+        Log.d("configure()", "called config: "+config);
         // do not start service if it was not already started
         // FIXES:
         // https://github.com/mauron85/react-native-background-geolocation/issues/360
@@ -113,6 +115,7 @@ public class LocationServiceProxy implements LocationService, LocationServiceInf
 
     @Override
     public boolean isStarted() {
+        Log.d("isStarted()", "called mContext: "+mContext);
         LocationServiceInfo serviceInfo = new LocationServiceInfoImpl(mContext);
         return serviceInfo.isStarted();
     }

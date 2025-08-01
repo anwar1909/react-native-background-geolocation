@@ -1,7 +1,6 @@
-[submodule "android/common"]
-	path = android/common
-	url = https://github.com/anwar1909/background-geolocation-android.git
-	branch = fix/post-size
-[submodule "ios/common"]
+[submodule "ios-common"]
 	path = ios/common
-	url = https://github.com/anwar1909/background-geolocation-ios.git
+	url = https://github.com/mak12/background-geolocation-ios.git
+[submodule "android-common"]
+	path = android/common
+	url = https://github.com/mak12/background-geolocation-android.git

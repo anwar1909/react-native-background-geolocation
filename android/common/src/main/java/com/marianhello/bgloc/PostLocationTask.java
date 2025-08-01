@@ -60,6 +60,7 @@ public class PostLocationTask {
     }
 
     public void setConfig(Config config) {
+        logger.debug("setConfig(): {}", config);
         mConfig = config;
     }
 
@@ -71,7 +72,7 @@ public class PostLocationTask {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                mLocationDAO.deleteUnpostedLocations();
+                // mLocationDAO.deleteUnpostedLocations();
             }
         });
     }
@@ -85,6 +86,8 @@ public class PostLocationTask {
         long locationId = mLocationDAO.persistLocation(location);
         location.setLocationId(locationId);
 
+        logger.warn("PostLocationTask: isi mConfig: {} ", location);
+
         try {
             mExecutor.execute(new Runnable() {
                 @Override
@@ -93,6 +96,7 @@ public class PostLocationTask {
                 }
             });
         } catch (RejectedExecutionException ex) {
+            // logger.warn("PostLocationTask: isi mConfig: {} ", mConfig);
             mLocationDAO.updateLocationForSync(locationId);
         }
     }
@@ -106,7 +110,7 @@ public class PostLocationTask {
         try {
             if (!mExecutor.awaitTermination(waitSeconds, TimeUnit.SECONDS)) {
                 mExecutor.shutdownNow();
-                mLocationDAO.deleteUnpostedLocations();
+                // mLocationDAO.deleteUnpostedLocations();
             }
         } catch (InterruptedException e) {
             mExecutor.shutdownNow();
@@ -114,7 +118,10 @@ public class PostLocationTask {
     }
 
     private void post(final BackgroundLocation location) {
+        logger.debug("PostLocationTask: post: location: {}", location);
         long locationId = location.getLocationId();
+
+        // postLocation(location);
 
         if (mHasConnectivity && mConfig.hasValidUrl()) {
             if (postLocation(location)) {
@@ -131,7 +138,7 @@ public class PostLocationTask {
         if (mConfig.hasValidSyncUrl()) {
             long syncLocationsCount = mLocationDAO.getLocationsForSyncCount(System.currentTimeMillis());
             if (syncLocationsCount >= mConfig.getSyncThreshold()) {
-                logger.debug("Attempt to sync locations: {} threshold: {}", syncLocationsCount, mConfig.getSyncThreshold());
+                // logger.debug("Attempt to sync locations: {} threshold: {}", syncLocationsCount, mConfig.getSyncThreshold());
                 mTaskListener.onSyncRequested();
             }
         }
@@ -149,7 +156,8 @@ public class PostLocationTask {
         }
 
         String url = mConfig.getUrl();
-        logger.debug("Posting json to url: {} headers: {}", url, mConfig.getHttpHeaders());
+        logger.debug("Posting json to url: {} template: {}", url, jsonLocations);
+        // logger.debug("Posting json to url: {} headers: {}", url, mConfig.getHttpHeaders());
         int responseCode;
 
         try {

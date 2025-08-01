@@ -32,10 +32,10 @@ In `android/settings.gradle`
 
 ```gradle
 ...
-include ':anwar1909_react-native-background-geolocation-common'
-project(':anwar1909_react-native-background-geolocation-common').projectDir = new File(rootProject.projectDir, '../node_modules/@anwar1909/react-native-background-geolocation/android/common')
-include ':anwar1909_react-native-background-geolocation'
-project(':anwar1909_react-native-background-geolocation').projectDir = new File(rootProject.projectDir, '../node_modules/@anwar1909/react-native-background-geolocation/android/lib')
+include ':@anwar1909_react-native-background-geolocation-common'
+project(':@anwar1909_react-native-background-geolocation-common').projectDir = new File(rootProject.projectDir, '../node_modules/@anwar1909/react-native-background-geolocation/android/common')
+include ':@anwar1909_react-native-background-geolocation'
+project(':@anwar1909_react-native-background-geolocation').projectDir = new File(rootProject.projectDir, '../node_modules/@anwar1909/react-native-background-geolocation/android/lib')
 ...
 ```
 
@@ -44,7 +44,7 @@ In `android/app/build.gradle`
 ```gradle
 dependencies {
     ...
-    compile project(':anwar1909_react-native-background-geolocation')
+    compile project(':@anwar1909_react-native-background-geolocation')
     ...
 }
 ```

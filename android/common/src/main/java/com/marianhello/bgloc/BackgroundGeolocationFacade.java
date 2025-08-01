@@ -395,6 +395,7 @@ public class BackgroundGeolocationFacade {
             Config newConfig = Config.merge(getStoredConfig(), config);
             persistConfiguration(newConfig);
             mConfig = newConfig;
+            logger.debug("Facade configure() isi mService {}", mService);
             mService.configure(newConfig);
         } catch (Exception e) {
             logger.error("Configuration error: {}", e.getMessage());
@@ -548,6 +549,7 @@ public class BackgroundGeolocationFacade {
     private void persistConfiguration(Config config) throws NullPointerException {
         ConfigurationDAO dao = DAOFactory.createConfigurationDAO(getContext());
         dao.persistConfiguration(config);
+        // logger.debug("persistConfiguration() di akses ambil params config: {}", config);
     }
     private void persistSetting(Setting setting) throws NullPointerException {
         SettingDAO dao = DAOFactory.createSettingDAO(getContext());
