@@ -39,12 +39,5 @@
   },
   "peerDependencies": {
     "react-native": ">=0.60.5"
-  },
-  "react-native": {
-    "android": {
-      "sourceDir": "./android/lib",
-      "packageImportPath": "import com.marianhello.bgloc.react.BackgroundGeolocationPackage;",
-      "packageInstance": "new BackgroundGeolocationPackage()"
-    }
   }
 }
