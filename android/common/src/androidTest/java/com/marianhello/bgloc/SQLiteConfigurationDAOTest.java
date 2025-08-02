@@ -1,4 +1,4 @@
-package com.marianhello.bgloc;
+package com.anwar1909.bgloc;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -7,13 +7,13 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.filters.SmallTest;
 
-import com.marianhello.bgloc.Config;
-import com.marianhello.bgloc.data.HashMapLocationTemplate;
-import com.marianhello.bgloc.data.LocationTemplate;
-import com.marianhello.bgloc.data.LocationTemplateFactory;
-import com.marianhello.bgloc.data.sqlite.SQLiteConfigurationContract;
-import com.marianhello.bgloc.data.sqlite.SQLiteConfigurationDAO;
-import com.marianhello.bgloc.data.sqlite.SQLiteOpenHelper;
+import com.anwar1909.bgloc.Config;
+import com.anwar1909.bgloc.data.HashMapLocationTemplate;
+import com.anwar1909.bgloc.data.LocationTemplate;
+import com.anwar1909.bgloc.data.LocationTemplateFactory;
+import com.anwar1909.bgloc.data.sqlite.SQLiteConfigurationContract;
+import com.anwar1909.bgloc.data.sqlite.SQLiteConfigurationDAO;
+import com.anwar1909.bgloc.data.sqlite.SQLiteOpenHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -1,6 +1,6 @@
-package com.marianhello.bgloc;
+package com.anwar1909.bgloc;
 
-import com.marianhello.bgloc.test.TestConstants;
+import com.anwar1909.bgloc.test.TestConstants;
 
 public class TestResourceResolver extends ResourceResolver {
 

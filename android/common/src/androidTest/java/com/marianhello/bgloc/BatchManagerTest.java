@@ -1,4 +1,4 @@
-package com.marianhello.bgloc;
+package com.anwar1909.bgloc;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,14 +8,14 @@ import android.support.test.filters.SmallTest;
 import android.util.JsonReader;
 import android.util.JsonToken;
 
-import com.marianhello.bgloc.data.ArrayListLocationTemplate;
-import com.marianhello.bgloc.data.BackgroundLocation;
-import com.marianhello.bgloc.data.HashMapLocationTemplate;
-import com.marianhello.bgloc.data.LocationTemplate;
-import com.marianhello.bgloc.data.LocationTemplateFactory;
-import com.marianhello.bgloc.data.sqlite.SQLiteLocationDAO;
-import com.marianhello.bgloc.data.sqlite.SQLiteOpenHelper;
-import com.marianhello.bgloc.sync.BatchManager;
+import com.anwar1909.bgloc.data.ArrayListLocationTemplate;
+import com.anwar1909.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.data.HashMapLocationTemplate;
+import com.anwar1909.bgloc.data.LocationTemplate;
+import com.anwar1909.bgloc.data.LocationTemplateFactory;
+import com.anwar1909.bgloc.data.sqlite.SQLiteLocationDAO;
+import com.anwar1909.bgloc.data.sqlite.SQLiteOpenHelper;
+import com.anwar1909.bgloc.sync.BatchManager;
 
 import junit.framework.Assert;
 
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.marianhello.bgloc.data.sqlite.SQLiteLocationContract.LocationEntry.SQL_DROP_LOCATION_TABLE;
+import static com.anwar1909.bgloc.data.sqlite.SQLiteLocationContract.LocationEntry.SQL_DROP_LOCATION_TABLE;
 
 /**
  * Created by finch on 22/07/16.

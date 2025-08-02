@@ -1,9 +1,9 @@
-package com.marianhello.bgloc;
+package com.anwar1909.bgloc;
 
 import android.os.Parcel;
 
-import com.marianhello.bgloc.Config;
-import com.marianhello.bgloc.data.LocationTemplateFactory;
+import com.anwar1909.bgloc.Config;
+import com.anwar1909.bgloc.data.LocationTemplateFactory;
 
 import junit.framework.Assert;
 

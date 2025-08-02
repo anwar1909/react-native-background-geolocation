@@ -1,4 +1,4 @@
-package com.marianhello.bgloc.provider;
+package com.anwar1909.bgloc.provider;
 
 public class TestLocationProviderFactory extends LocationProviderFactory {
     private LocationProvider mProvider = new MockLocationProvider();

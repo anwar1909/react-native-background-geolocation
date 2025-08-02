@@ -1,10 +1,10 @@
-package com.marianhello.backgroundgeolocation;
+package com.anwar1909.backgroundgeolocation;
 
-import com.marianhello.bgloc.Config;
-import com.marianhello.bgloc.data.BackgroundLocation;
-import com.marianhello.bgloc.data.HashMapLocationTemplate;
-import com.marianhello.bgloc.data.LocationTemplate;
-import com.marianhello.bgloc.data.LocationTemplateFactory;
+import com.anwar1909.bgloc.Config;
+import com.anwar1909.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.data.HashMapLocationTemplate;
+import com.anwar1909.bgloc.data.LocationTemplate;
+import com.anwar1909.bgloc.data.LocationTemplateFactory;
 
 import junit.framework.Assert;
 

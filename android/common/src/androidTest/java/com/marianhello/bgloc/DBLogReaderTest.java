@@ -1,13 +1,13 @@
-package com.marianhello.bgloc;
+package com.anwar1909.bgloc;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.filters.SmallTest;
 
-import com.marianhello.logging.DBLogReader;
-import com.marianhello.logging.LogEntry;
-import com.marianhello.logging.LoggerManager;
+import com.anwar1909.logging.DBLogReader;
+import com.anwar1909.logging.LogEntry;
+import com.anwar1909.logging.LoggerManager;
 
 import junit.framework.Assert;
 

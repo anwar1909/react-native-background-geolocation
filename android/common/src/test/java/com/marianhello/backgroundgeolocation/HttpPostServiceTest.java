@@ -1,9 +1,9 @@
-package com.marianhello.backgroundgeolocation;
+package com.anwar1909.backgroundgeolocation;
 
 import android.os.Build;
 
-import com.marianhello.bgloc.HttpPostService;
-import com.marianhello.bgloc.HttpPostService.UploadingProgressListener;
+import com.anwar1909.bgloc.HttpPostService;
+import com.anwar1909.bgloc.HttpPostService.UploadingProgressListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

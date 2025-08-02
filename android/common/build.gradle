@@ -53,7 +53,7 @@ allprojects {
 }
 
 android {
-    namespace "com.marianhello.bgloc"
+    namespace "com.anwar1909.bgloc"
     compileSdkVersion project.ext.getCompileSdkVersion()
     buildToolsVersion project.ext.getBuildToolsVersion()
 

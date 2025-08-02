@@ -1,4 +1,4 @@
-package com.marianhello.bgloc;
+package com.anwar1909.bgloc;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,9 +7,9 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.filters.SmallTest;
 
-import com.marianhello.bgloc.data.BackgroundLocation;
-import com.marianhello.bgloc.data.sqlite.SQLiteLocationDAO;
-import com.marianhello.bgloc.data.sqlite.SQLiteOpenHelper;
+import com.anwar1909.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.data.sqlite.SQLiteLocationDAO;
+import com.anwar1909.bgloc.data.sqlite.SQLiteOpenHelper;
 
 import junit.framework.Assert;
 

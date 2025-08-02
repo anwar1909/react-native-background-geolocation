@@ -1,13 +1,13 @@
-package com.marianhello.bgloc;
+package com.anwar1909.bgloc;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 
-import com.marianhello.bgloc.data.BackgroundLocation;
-import com.marianhello.bgloc.data.LocationDAO;
-import com.marianhello.bgloc.data.provider.ContentProviderLocationDAO;
-import com.marianhello.bgloc.data.sqlite.SQLiteOpenHelper;
-import com.marianhello.bgloc.test.LocationProviderTestCase;
+import com.anwar1909.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.data.LocationDAO;
+import com.anwar1909.bgloc.data.provider.ContentProviderLocationDAO;
+import com.anwar1909.bgloc.data.sqlite.SQLiteOpenHelper;
+import com.anwar1909.bgloc.test.LocationProviderTestCase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import static android.support.test.InstrumentationRegistry.getContext;
-import static com.marianhello.bgloc.data.sqlite.SQLiteLocationContract.LocationEntry.SQL_DROP_LOCATION_TABLE;
+import static com.anwar1909.bgloc.data.sqlite.SQLiteLocationContract.LocationEntry.SQL_DROP_LOCATION_TABLE;
 import static junit.framework.Assert.assertEquals;
 
 public class ContentProviderLocationDAOTest extends LocationProviderTestCase {

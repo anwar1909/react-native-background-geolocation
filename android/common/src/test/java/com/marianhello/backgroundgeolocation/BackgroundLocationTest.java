@@ -1,9 +1,9 @@
-package com.marianhello.backgroundgeolocation;
+package com.anwar1909.backgroundgeolocation;
 
 import android.os.Build;
 import android.support.test.filters.SmallTest;
 
-import com.marianhello.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.data.BackgroundLocation;
 
 import junit.framework.Assert;
 

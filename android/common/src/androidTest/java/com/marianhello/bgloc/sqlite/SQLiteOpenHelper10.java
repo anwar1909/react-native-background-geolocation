@@ -1,11 +1,11 @@
-package com.marianhello.bgloc.sqlite;
+package com.anwar1909.bgloc.sqlite;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.marianhello.bgloc.data.sqlite.SQLiteLocationContract.LocationEntry;
-import com.marianhello.bgloc.data.sqlite.SQLiteConfigurationContract.ConfigurationEntry;
+import com.anwar1909.bgloc.data.sqlite.SQLiteLocationContract.LocationEntry;
+import com.anwar1909.bgloc.data.sqlite.SQLiteConfigurationContract.ConfigurationEntry;
 
 /**
  * Created by finch on 13/07/16.

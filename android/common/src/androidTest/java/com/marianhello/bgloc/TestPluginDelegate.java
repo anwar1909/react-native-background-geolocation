@@ -1,7 +1,7 @@
-package com.marianhello.bgloc;
+package com.anwar1909.bgloc;
 
-import com.marianhello.bgloc.data.BackgroundActivity;
-import com.marianhello.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.data.BackgroundActivity;
+import com.anwar1909.bgloc.data.BackgroundLocation;
 
 public class TestPluginDelegate implements PluginDelegate {
     @Override

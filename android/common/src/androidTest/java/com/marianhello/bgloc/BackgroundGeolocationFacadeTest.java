@@ -1,11 +1,11 @@
-package com.marianhello.bgloc;
+package com.anwar1909.bgloc;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.marianhello.bgloc.data.BackgroundLocation;
-import com.marianhello.bgloc.provider.TestLocationProviderFactory;
-import com.marianhello.bgloc.service.LocationServiceImpl;
+import com.anwar1909.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.provider.TestLocationProviderFactory;
+import com.anwar1909.bgloc.service.LocationServiceImpl;
 
 import org.junit.After;
 import org.junit.Ignore;

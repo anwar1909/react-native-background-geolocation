@@ -1,4 +1,4 @@
-package com.marianhello.bgloc;
+package com.anwar1909.bgloc;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,12 +14,12 @@ import android.support.test.rule.ServiceTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.marianhello.bgloc.data.BackgroundLocation;
-import com.marianhello.bgloc.provider.MockLocationProvider;
-import com.marianhello.bgloc.provider.TestLocationProviderFactory;
-import com.marianhello.bgloc.service.LocationServiceImpl;
-import com.marianhello.bgloc.service.LocationServiceIntentBuilder;
-import com.marianhello.bgloc.data.LocationTransform;
+import com.anwar1909.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.provider.MockLocationProvider;
+import com.anwar1909.bgloc.provider.TestLocationProviderFactory;
+import com.anwar1909.bgloc.service.LocationServiceImpl;
+import com.anwar1909.bgloc.service.LocationServiceIntentBuilder;
+import com.anwar1909.bgloc.data.LocationTransform;
 
 import org.junit.After;
 import org.junit.Before;

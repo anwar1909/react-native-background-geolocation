@@ -17,9 +17,9 @@
 #}
 
 # Keep all classes and members for location and sync
--keep class com.marianhello.bgloc.** { *; }
--keep class com.marianhello.bgloc.data.** { *; }
--keep class com.marianhello.bgloc.sync.** { *; }
+-keep class com.anwar1909.bgloc.** { *; }
+-keep class com.anwar1909.bgloc.data.** { *; }
+-keep class com.anwar1909.bgloc.sync.** { *; }
 -keep class android.accounts.** { *; }
 -keep class org.json.** { *; }
 

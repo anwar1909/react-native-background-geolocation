@@ -1,11 +1,11 @@
-package com.marianhello.backgroundgeolocation;
+package com.anwar1909.backgroundgeolocation;
 
-import com.marianhello.bgloc.Config;
-import com.marianhello.bgloc.ConnectivityListener;
-import com.marianhello.bgloc.PostLocationTask;
-import com.marianhello.bgloc.PostLocationTask.PostLocationTaskListener;
-import com.marianhello.bgloc.data.BackgroundLocation;
-import com.marianhello.bgloc.data.LocationDAO;
+import com.anwar1909.bgloc.Config;
+import com.anwar1909.bgloc.ConnectivityListener;
+import com.anwar1909.bgloc.PostLocationTask;
+import com.anwar1909.bgloc.PostLocationTask.PostLocationTaskListener;
+import com.anwar1909.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.data.LocationDAO;
 
 import org.junit.After;
 import org.junit.Before;

@@ -1,8 +1,8 @@
-package com.marianhello.backgroundgeolocation;
+package com.anwar1909.backgroundgeolocation;
 
 import android.support.test.filters.SmallTest;
 
-import com.marianhello.logging.DBLogReader;
+import com.anwar1909.logging.DBLogReader;
 
 import junit.framework.Assert;
 

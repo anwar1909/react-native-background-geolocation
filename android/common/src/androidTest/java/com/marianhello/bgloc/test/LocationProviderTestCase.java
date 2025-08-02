@@ -1,4 +1,4 @@
-package com.marianhello.bgloc.test;
+package com.anwar1909.bgloc.test;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,8 +10,8 @@ import android.test.RenamingDelegatingContext;
 import android.test.mock.MockContentResolver;
 import android.test.mock.MockContext;
 
-import com.marianhello.bgloc.data.provider.LocationContentProvider;
-import com.marianhello.bgloc.test.TestConstants;
+import com.anwar1909.bgloc.data.provider.LocationContentProvider;
+import com.anwar1909.bgloc.test.TestConstants;
 
 /**
  * @author diego

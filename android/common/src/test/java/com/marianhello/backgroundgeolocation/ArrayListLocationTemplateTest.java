@@ -1,8 +1,8 @@
-package com.marianhello.backgroundgeolocation;
+package com.anwar1909.backgroundgeolocation;
 
-import com.marianhello.bgloc.data.ArrayListLocationTemplate;
-import com.marianhello.bgloc.data.BackgroundLocation;
-import com.marianhello.bgloc.data.LocationTemplate;
+import com.anwar1909.bgloc.data.ArrayListLocationTemplate;
+import com.anwar1909.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.data.LocationTemplate;
 
 import junit.framework.Assert;
 
