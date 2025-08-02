@@ -3,7 +3,7 @@ package com.marianhello.bgloc.react;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
-import com.marianhello.bgloc.Setting;
+import com.anwar1909.bgloc.Setting;
 
 import org.json.JSONException;
 

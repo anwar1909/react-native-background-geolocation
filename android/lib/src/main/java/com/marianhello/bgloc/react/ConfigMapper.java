@@ -7,11 +7,11 @@ import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
 import com.iodine.start.ArrayUtil;
 import com.iodine.start.MapUtil;
-import com.marianhello.bgloc.Config;
-import com.marianhello.bgloc.data.ArrayListLocationTemplate;
-import com.marianhello.bgloc.data.HashMapLocationTemplate;
-import com.marianhello.bgloc.data.LocationTemplate;
-import com.marianhello.bgloc.data.LocationTemplateFactory;
+import com.anwar1909.bgloc.Config;
+import com.anwar1909.bgloc.data.ArrayListLocationTemplate;
+import com.anwar1909.bgloc.data.HashMapLocationTemplate;
+import com.anwar1909.bgloc.data.LocationTemplate;
+import com.anwar1909.bgloc.data.LocationTemplateFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;

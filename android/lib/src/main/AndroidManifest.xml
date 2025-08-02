@@ -22,7 +22,7 @@
     <application>
         <service android:name=".floatingview.FloatingViewService" android:foregroundServiceType="location" android:exported="false" />
         <service
-            android:name="com.marianhello.bgloc.sync.SyncService"
+            android:name="com.anwar1909.bgloc.sync.SyncService"
             android:exported="true"
             android:foregroundServiceType="dataSync">
             <intent-filter>
@@ -32,7 +32,7 @@
                 android:resource="@xml/syncadapter"/>
         </service>
         <service
-            android:name="com.marianhello.bgloc.sync.AuthenticatorService" android:exported="true">
+            android:name="com.anwar1909.bgloc.sync.AuthenticatorService" android:exported="true">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
@@ -41,13 +41,13 @@
                 android:resource="@xml/authenticator" />
         </service>
         <provider
-            android:name="com.marianhello.bgloc.data.provider.LocationContentProvider"
+            android:name="com.anwar1909.bgloc.data.provider.LocationContentProvider"
             android:authorities="@string/anwar1909_bgloc_content_authority"
             android:exported="false"
             android:syncable="true"/>
-        <service android:enabled="true" android:exported="false" android:name="com.marianhello.bgloc.service.LocationServiceImpl" android:foregroundServiceType="location|dataSync"/>
-        <service android:enabled="true" android:exported="false" android:name="com.marianhello.bgloc.react.headless.HeadlessService" />
-        <receiver android:enabled="true" android:exported="true" android:name="com.marianhello.bgloc.BootCompletedReceiver">
+        <service android:enabled="true" android:exported="false" android:name="com.anwar1909.bgloc.service.LocationServiceImpl" android:foregroundServiceType="location|dataSync"/>
+        <service android:enabled="true" android:exported="false" android:name="com.anwar1909.bgloc.react.headless.HeadlessService" />
+        <receiver android:enabled="true" android:exported="true" android:name="com.anwar1909.bgloc.BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
