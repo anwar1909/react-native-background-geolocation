@@ -40,7 +40,7 @@
     MAURSQLiteLocationDAO *locationDAO = [MAURSQLiteLocationDAO sharedInstance];
     long unsigned threadsCount = 100;
     
-    dispatch_queue_t queue = dispatch_queue_create("com.marianhello.SQLiteLocationDAOThreadTests", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_queue_t queue = dispatch_queue_create("com.anwar1909.SQLiteLocationDAOThreadTests", DISPATCH_QUEUE_CONCURRENT);
     dispatch_group_t group = dispatch_group_create();
     
     for (int i = 0; i < threadsCount; i++) {

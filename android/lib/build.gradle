@@ -56,7 +56,7 @@ repositories {
 }
 
 android {
-    namespace "com.marianhello.bgloc.react"
+    namespace "com.anwar1909.bgloc.react"
     compileSdkVersion project.ext.getCompileSdkVersion()
     buildToolsVersion project.ext.getBuildToolsVersion()
     if (hasApp) {

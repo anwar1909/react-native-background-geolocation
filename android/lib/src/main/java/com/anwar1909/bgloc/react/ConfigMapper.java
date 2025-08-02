@@ -1,4 +1,4 @@
-package com.marianhello.bgloc.react;
+package com.anwar1909.bgloc.react;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;

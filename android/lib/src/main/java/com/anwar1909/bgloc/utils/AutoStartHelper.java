@@ -1,4 +1,4 @@
-package com.marianhello.bgloc.utils;
+package com.anwar1909.bgloc.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;

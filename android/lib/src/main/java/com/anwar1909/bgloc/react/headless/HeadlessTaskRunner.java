@@ -1,4 +1,4 @@
-package com.marianhello.bgloc.react.headless;
+package com.anwar1909.bgloc.react.headless;
 
 import android.content.Intent;
 

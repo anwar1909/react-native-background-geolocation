@@ -1,4 +1,4 @@
-package com.marianhello.bgloc.react;
+package com.anwar1909.bgloc.react;
 
 import android.content.Context;
 
@@ -19,9 +19,9 @@ import com.anwar1909.bgloc.PluginException;
 import com.anwar1909.bgloc.Setting;
 import com.anwar1909.bgloc.data.BackgroundActivity;
 import com.anwar1909.bgloc.data.BackgroundLocation;
-import com.marianhello.bgloc.react.data.LocationMapper;
-import com.marianhello.bgloc.react.headless.HeadlessTaskRunner;
-import com.marianhello.bgloc.utils.AutoStartHelper;
+import com.anwar1909.bgloc.react.data.LocationMapper;
+import com.anwar1909.bgloc.react.headless.HeadlessTaskRunner;
+import com.anwar1909.bgloc.utils.AutoStartHelper;
 import com.anwar1909.logging.LogEntry;
 import com.anwar1909.logging.LoggerManager;
 import com.anwar1909.utils.RealTimeHelper;

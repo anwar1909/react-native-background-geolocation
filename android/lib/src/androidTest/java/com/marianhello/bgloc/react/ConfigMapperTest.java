@@ -1,4 +1,4 @@
-package com.marianhello.bgloc.react;
+package com.anwar1909.bgloc.react;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -9,11 +9,11 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.soloader.SoLoader;
-import com.marianhello.bgloc.Config;
-import com.marianhello.bgloc.data.ArrayListLocationTemplate;
-import com.marianhello.bgloc.data.HashMapLocationTemplate;
-import com.marianhello.bgloc.data.LocationTemplate;
-import com.marianhello.bgloc.data.LocationTemplateFactory;
+import com.anwar1909.bgloc.Config;
+import com.anwar1909.bgloc.data.ArrayListLocationTemplate;
+import com.anwar1909.bgloc.data.HashMapLocationTemplate;
+import com.anwar1909.bgloc.data.LocationTemplate;
+import com.anwar1909.bgloc.data.LocationTemplateFactory;
 
 import junit.framework.Assert;
 
