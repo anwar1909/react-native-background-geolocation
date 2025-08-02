@@ -1,22 +1,23 @@
+const path = require('path');
+
 module.exports = {
-    dependencies: {
-      '@anwar1909/react-native-background-geolocation': {
-        platforms: {
-          android: {
-            // 1. Tambahkan kedua sub-modul ke include
-            sourceDir:
-              './node_modules/@anwar1909/react-native-background-geolocation/android/lib',
-            packageImportPath:
-              'import com.marianhello.bgloc.react.BackgroundGeolocationPackage;',
-            packageInstance: 'new BackgroundGeolocationPackage()',
-  
-            // 2. Extra include untuk module "common"
-            dependencyConfiguration: `
-              implementation project(':anwar1909_react-native-background-geolocation')
-              implementation project(':anwar1909_react-native-background-geolocation-common')
-            `,
-          },
+  dependencies: {
+    '@anwar1909/react-native-background-geolocation': {
+      root: __dirname,
+      platforms: {
+        android: {
+          sourceDir: path.join(__dirname, 'android', 'lib'),
+          manifestPath: path.join(__dirname, 'android', 'lib', 'src', 'main', 'AndroidManifest.xml'),
+          libraryName: 'anwar1909_react-native-background-geolocation',
+          packageImportPath: 'import com.marianhello.bgloc.react.BackgroundGeolocationPackage;',
+          dependencies: [
+            {
+              name: 'anwar1909_react-native-background-geolocation-common',
+              sourceDir: path.join(__dirname, 'android', 'common'),
+            }
+          ]
         },
       },
     },
-  };
+  },
+};
