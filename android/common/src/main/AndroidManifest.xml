@@ -17,8 +17,7 @@
        specific language governing permissions and limitations
        under the License.
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.anwar1909.bgloc.react" android:versionName="1.0" android:versionCode="1">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1">
     <application>
         <service android:name=".floatingview.FloatingViewService" android:foregroundServiceType="location" android:exported="false" />
         <service
