@@ -2,6 +2,7 @@ package com.anwar1909.bgloc;
 
 import com.anwar1909.bgloc.data.BackgroundLocation;
 import com.anwar1909.bgloc.data.LocationDAO;
+import com.anwar1909.bgloc.service.LocationServiceImpl;
 import com.anwar1909.logging.LoggerManager;
 
 import org.json.JSONArray;
@@ -32,6 +33,7 @@ public class PostLocationTask {
     private final LocationDAO mLocationDAO;
     private final PostLocationTaskListener mTaskListener;
     private final ConnectivityListener mConnectivityListener;
+    private final LocationServiceImpl mLocationService;
 
     private final ExecutorService mExecutor;
 
@@ -45,22 +47,23 @@ public class PostLocationTask {
         void onSyncRequested();
         void onRequestedAbortUpdates();
         void onHttpAuthorizationUpdates();
+        void onHttpResponse(int statusCode, String responseBody);
     }
 
-    public PostLocationTask(LocationDAO dao, PostLocationTaskListener taskListener,
-                            ConnectivityListener connectivityListener) {
+    public PostLocationTask(LocationDAO dao, PostLocationTaskListener taskListener, ConnectivityListener connectivityListener, LocationServiceImpl locationService) {
         logger = LoggerManager.getLogger(PostLocationTask.class);
-        logger.info("Creating PostLocationTask");
+        // logger.info("Creating PostLocationTask");
 
         mLocationDAO = dao;
         mTaskListener = taskListener;
         mConnectivityListener = connectivityListener;
+        mLocationService = locationService;
 
         mExecutor = Executors.newSingleThreadExecutor();
     }
 
     public void setConfig(Config config) {
-        logger.debug("setConfig(): {}", config);
+        // logger.debug("setConfig(): {}", config);
         mConfig = config;
     }
 
@@ -86,7 +89,7 @@ public class PostLocationTask {
         long locationId = mLocationDAO.persistLocation(location);
         location.setLocationId(locationId);
 
-        logger.warn("PostLocationTask: isi mConfig: {} ", location);
+        // logger.warn("PostLocationTask: isi mConfig: {} ", location);
 
         try {
             mExecutor.execute(new Runnable() {
@@ -118,7 +121,7 @@ public class PostLocationTask {
     }
 
     private void post(final BackgroundLocation location) {
-        logger.debug("PostLocationTask: post: location: {}", location);
+        // logger.debug("PostLocationTask: post: location: {}", location);
         long locationId = location.getLocationId();
 
         // postLocation(location);
@@ -145,23 +148,43 @@ public class PostLocationTask {
     }
 
     private boolean postLocation(BackgroundLocation location) {
-        logger.debug("Executing PostLocationTask#postLocation");
-        JSONArray jsonLocations = new JSONArray();
+        // logger.debug("Executing PostLocationTask#postLocation");
+        // JSONArray jsonLocations = new JSONArray();
+        JSONObject jsonLocation;
 
         try {
-            jsonLocations.put(mConfig.getTemplate().locationToJson(location));
+            jsonLocation = (JSONObject) mConfig.getTemplate().locationToJson(location);
         } catch (JSONException e) {
             logger.warn("Location to json failed: {}", location.toString());
             return false;
         }
 
         String url = mConfig.getUrl();
-        logger.debug("Posting json to url: {} template: {}", url, jsonLocations);
+        // logger.debug("Posting json to url: {} template: {}", url, jsonLocation);
         // logger.debug("Posting json to url: {} headers: {}", url, mConfig.getHttpHeaders());
+
+        String responseBody;
         int responseCode;
 
         try {
-            responseCode = HttpPostService.postJSON(url, jsonLocations, mConfig.getHttpHeaders());
+            // responseCode = HttpPostService.postJSON(url, jsonLocation, mConfig.getHttpHeaders());
+            // Sekarang postJSON return response body (String)
+            responseBody = HttpPostService.postJSON(url, jsonLocation, mConfig.getHttpHeaders());
+            // logger.debug("Response Url: "+responseBody);
+            try {
+                JSONObject res = new JSONObject(responseBody);
+                responseCode = res.optInt("status", 200); // default 200 kalau tidak ada
+            } catch (JSONException e) {
+                // Kalau bukan JSON, fallback: anggap sukses 200
+                responseCode = 200;
+            }
+
+            // logger.debug("isi mTaskListener: "+mTaskListener);
+
+            // Kirim ke LocationServiceImpl
+            if (mLocationService != null) {
+                mLocationService.onHttpResponse(responseCode, responseBody);
+            }
         } catch (Exception e) {
             mHasConnectivity = mConnectivityListener.hasConnectivity();
             logger.warn("Error while posting locations: {}", e.getMessage());
@@ -202,7 +225,7 @@ public class PostLocationTask {
             int responseCode;
 
             try {
-                responseCode = HttpPostService.postJSON(url, jsonError, mConfig.getHttpHeaders());
+                responseCode = HttpPostService.postJSONForCode(url, jsonError, mConfig.getHttpHeaders());
             } catch (Exception e) {
                 mHasConnectivity = mConnectivityListener.hasConnectivity();
                 logger.warn("Error while posting Errors: {}", e.toString());

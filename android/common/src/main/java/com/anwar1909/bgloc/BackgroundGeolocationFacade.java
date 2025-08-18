@@ -26,6 +26,7 @@ import com.anwar1909.bgloc.data.ConfigurationDAO;
 import com.anwar1909.bgloc.data.DAOFactory;
 import com.anwar1909.bgloc.data.LocationDAO;
 import com.anwar1909.bgloc.data.SettingDAO;
+import com.anwar1909.bgloc.model.HttpResponse;
 import com.anwar1909.bgloc.provider.LocationProvider;
 import com.anwar1909.bgloc.service.LocationService;
 import com.anwar1909.bgloc.service.LocationServiceImpl;
@@ -191,6 +192,16 @@ public class BackgroundGeolocationFacade {
                         mDelegate.onHttpAuthorization();
                     }
 
+                    return;
+                }
+
+                case LocationServiceImpl.MSG_ON_HTTP_RESPONSE: {
+                    logger.debug("Received MSG_ON_HTTP_RESPONSE From LocationServiceImpl.onHttpResponseLog");
+                    bundle.setClassLoader(LocationServiceImpl.class.getClassLoader());
+                    HttpResponse response = (HttpResponse) bundle.getParcelable("payload");
+                    if (mDelegate != null) {
+                        mDelegate.onHttpResponseLog(response);
+                    }
                     return;
                 }
             }

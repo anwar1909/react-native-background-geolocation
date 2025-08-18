@@ -2,6 +2,7 @@ package com.anwar1909.bgloc;
 
 import com.anwar1909.bgloc.data.BackgroundActivity;
 import com.anwar1909.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.model.HttpResponse;
 
 /**
  * Created by finch on 27.11.2017.
@@ -14,6 +15,7 @@ public interface PluginDelegate {
     void onActivityChanged(BackgroundActivity activity);
     void onServiceStatusChanged(int status);
     void onAbortRequested();
+    void onHttpResponseLog(HttpResponse response);
     void onHttpAuthorization();
     void onError(PluginException error);
 }

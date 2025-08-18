@@ -200,9 +200,9 @@ public class LocationServiceIntentBuilder {
     }
 
     public static Command getCommand(Intent intent) {
-        Log.d("LocationServiceIntentBuilder: ", "called intent: "+intent);
+        // Log.d("LocationServiceIntentBuilder: ", "called intent: "+intent);
         Bundle bundle = intent.getBundleExtra(KEY_COMMAND);
-        Log.d("LocationServiceIntentBuilder: ", "bundle: "+bundle);
+        // Log.d("LocationServiceIntentBuilder: ", "bundle: "+bundle);
         return Command.from(bundle);
     }
 

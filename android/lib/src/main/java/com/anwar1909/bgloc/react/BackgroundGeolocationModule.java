@@ -19,6 +19,7 @@ import com.anwar1909.bgloc.PluginException;
 import com.anwar1909.bgloc.Setting;
 import com.anwar1909.bgloc.data.BackgroundActivity;
 import com.anwar1909.bgloc.data.BackgroundLocation;
+import com.anwar1909.bgloc.model.HttpResponse;
 import com.anwar1909.bgloc.react.data.LocationMapper;
 import com.anwar1909.bgloc.react.headless.HeadlessTaskRunner;
 import com.anwar1909.bgloc.utils.AutoStartHelper;
@@ -45,6 +46,7 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
     public static final String ABORT_REQUESTED_EVENT = "abort_requested";
     public static final String HTTP_AUTHORIZATION_EVENT = "http_authorization";
     public static final String ERROR_EVENT = "error";
+    public static final String HTTP_RESPONSE_EVENT = "http_response";
 
     private static final int PERMISSIONS_REQUEST_CODE = 1;
 
@@ -451,6 +453,15 @@ public class BackgroundGeolocationModule extends ReactContextBaseJavaModule impl
     public void onAbortRequested() {
         sendEvent(ABORT_REQUESTED_EVENT, null);
     }
+
+    @Override
+    public void onHttpResponseLog(HttpResponse response) {
+        WritableMap params = Arguments.createMap();
+        params.putInt("statusCode", response.getStatusCode());
+        params.putString("body", response.getBody());
+        sendEvent(HTTP_RESPONSE_EVENT, params);
+    }
+
 
     @Override
     public void onHttpAuthorization() {

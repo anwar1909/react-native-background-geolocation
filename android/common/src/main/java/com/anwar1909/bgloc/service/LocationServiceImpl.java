@@ -57,6 +57,7 @@ import com.anwar1909.bgloc.headless.StationaryTask;
 import com.anwar1909.bgloc.headless.Task;
 import com.anwar1909.bgloc.headless.TaskRunner;
 import com.anwar1909.bgloc.headless.TaskRunnerFactory;
+import com.anwar1909.bgloc.model.HttpResponse;
 import com.anwar1909.bgloc.provider.LocationProvider;
 import com.anwar1909.bgloc.provider.LocationProviderFactory;
 import com.anwar1909.bgloc.provider.ProviderDelegate;
@@ -109,6 +110,8 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     public static final int MSG_ON_ABORT_REQUESTED = 106;
 
     public static final int MSG_ON_HTTP_AUTHORIZATION = 107;
+
+    public static final int MSG_ON_HTTP_RESPONSE = 10;
 
     /** notification id */
     private static int NOTIFICATION_ID = 1;
@@ -187,7 +190,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
         UncaughtExceptionLogger.register(this);
 
         logger = LoggerManager.getLogger(LocationServiceImpl.class);
-        logger.info("Creating LocationServiceImpl");
+        // logger.info("Creating LocationServiceImpl");
 
         mServiceId = System.currentTimeMillis();
 
@@ -217,28 +220,36 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"com.anwar1909.backgroundgeolocation:wakelock");
 
-        mPostLocationTask = new PostLocationTask(mLocationDAO,
-                new PostLocationTask.PostLocationTaskListener() {
-                    @Override
-                    public void onRequestedAbortUpdates() {
-                        handleRequestedAbortUpdates();
-                    }
+        mPostLocationTask = new PostLocationTask(
+            mLocationDAO, new PostLocationTask.PostLocationTaskListener() {
+                @Override
+                public void onRequestedAbortUpdates() {
+                    handleRequestedAbortUpdates();
+                }
 
-                    @Override
-                    public void onHttpAuthorizationUpdates() {
-                        handleHttpAuthorizationUpdates();
-                    }
+                @Override
+                public void onHttpAuthorizationUpdates() {
+                    handleHttpAuthorizationUpdates();
+                }
 
-                    @Override
-                    public void onSyncRequested() {
-                        SyncService.sync(mSyncAccount, mResolver.getAuthority(), false);
-                    }
-                }, new ConnectivityListener() {
-            @Override
-            public boolean hasConnectivity() {
-                return isNetworkAvailable();
-            }
-        });
+                @Override
+                public void onSyncRequested() {
+                    SyncService.sync(mSyncAccount, mResolver.getAuthority(), false);
+                }
+
+                @Override
+                public void onHttpResponse(int statusCode, String responseBody) {
+                    // Kosong saja, kita tidak perlu proses di listener ini
+                }
+            }, 
+            new ConnectivityListener() {
+                @Override
+                public boolean hasConnectivity() {
+                    return isNetworkAvailable();
+                }
+            },
+            this
+        );
 
         registerReceiver(connectivityChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         NotificationHelper.registerServiceChannel(this);
@@ -295,7 +306,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        logger.debug("onStartCommand() startId: {} intent: {} flags: {}", startId, intent, flags);
+        // logger.debug("onStartCommand() startId: {} intent: {} flags: {}", startId, intent, flags);
         if (intent == null || !containsCommand(intent)) {
             // when service was killed and restarted we will restart service
             start();
@@ -303,13 +314,13 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
         }
 
         boolean containsCommand = containsCommand(intent);
-        logger.debug("onStartCommand() containsCommand: {}", containsCommand);
-        logger.debug(
-                String.format("Service in [%s] state. cmdId: [%s]. startId: [%d]",
-                        sIsRunning ? "STARTED" : "NOT STARTED",
-                        containsCommand ? getCommand(intent).getId() : "N/A",
-                        startId)
-        );
+        // logger.debug("onStartCommand() containsCommand: {}", containsCommand);
+        // logger.debug(
+        //         String.format("Service in [%s] state. cmdId: [%s]. startId: [%d]",
+        //                 sIsRunning ? "STARTED" : "NOT STARTED",
+        //                 containsCommand ? getCommand(intent).getId() : "N/A",
+        //                 startId)
+        // );
 
         if (containsCommand) {
             LocationServiceIntentBuilder.Command cmd = getCommand(intent);
@@ -328,7 +339,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     }
 
     private void processCommand(int command, Object arg) {
-        logger.debug("processCommand: command: {} arg: {}", command, arg);
+        // logger.debug("processCommand: command: {} arg: {}", command, arg);
         try {
             switch (command) {
                 case CommandId.START:
@@ -366,7 +377,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public synchronized void start() {
-        logger.debug("!Will start service with: {}", mConfig);
+        // logger.debug("!Will start service with: {}", mConfig);
         if (sIsRunning) {
             return;
         }
@@ -388,7 +399,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
             // TODO: throw JSONException if config cannot be obtained from db
         }
 
-        logger.debug("Will start service with: {}", mConfig.toString());
+        // logger.debug("Will start service with: {}", mConfig.toString());
 
         mPostLocationTask.setConfig(mConfig);
         mPostLocationTask.clearQueue();
@@ -489,30 +500,30 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public synchronized void configure(Config config) {
-        logger.debug("configure() isi config: {}", config);
-        logger.debug("configure() isi mConfig: {}", mConfig);
+        // logger.debug("configure() isi config: {}", config);
+        // logger.debug("configure() isi mConfig: {}", mConfig);
         if (mConfig == null) {
             mConfig = config;
-            logger.debug("configure() isi return mConfig==null: {}", mConfig);
+            // logger.debug("configure() isi return mConfig==null: {}", mConfig);
             return;
         }
-        logger.debug("configure() isi after mConfig!=null: {}", mConfig);
+        // logger.debug("configure() isi after mConfig!=null: {}", mConfig);
         final Config currentConfig = mConfig;
         mConfig = config;
 
-        logger.debug("configure() isi final Config currentConfig = mConfig: {}", mConfig);
+        // logger.debug("configure() isi final Config currentConfig = mConfig: {}", mConfig);
 
         mPostLocationTask.setConfig(mConfig);
 
-        logger.debug("configure() isi mSetting: {}", mSetting);
+        // logger.debug("configure() isi mSetting: {}", mSetting);
         if (mSetting == null) {
-            logger.warn("Attempt to start unset service. Will use stored or default.");
+            // logger.warn("Attempt to start unset service. Will use stored or default.");
             mSetting = getSetting();
             // TODO: throw JSONException if config cannot be obtained from db
-            logger.debug("configure()->getSetting() isi mSetting: {}", mSetting);
+            // logger.debug("configure()->getSetting() isi mSetting: {}", mSetting);
         }
 
-        logger.debug("configure() isi mSetting.isStarted(): {}", mSetting.isStarted());
+        // logger.debug("configure() isi mSetting.isStarted(): {}", mSetting.isStarted());
         if(!mSetting.isStarted()){
             sIsRunning = false;
         }
@@ -603,7 +614,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     @Override
     public void onLocation(BackgroundLocation location) {
-        logger.debug("New location {}", location.toString());
+        // logger.debug("New location {}", location.toString());
 
         location = transformLocation(location);
         if (location == null) {
@@ -706,6 +717,22 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
 
     }
 
+    public void onHttpResponse(int statusCode, String responseBody) {
+        // logger.info("LocationServiceImpl onHttpResponse called: " + responseBody);
+
+        // Bungkus response ke dalam Parcelable HttpResponse
+        HttpResponse response = new HttpResponse(statusCode, responseBody);
+
+        // Buat intent untuk broadcast ke Facade
+        Intent intent = new Intent(ACTION_BROADCAST);
+        Bundle bundle = new Bundle();
+        bundle.putInt("action", MSG_ON_HTTP_RESPONSE);
+        bundle.putParcelable("payload", response);
+        // logger.info("LocationServiceImpl intent: " + intent);
+        // sendBroadcast(intent);
+        broadcastMessage(bundle);
+    }
+
     private void broadcastMessage(int msgId) {
         Bundle bundle = new Bundle();
         bundle.putInt("action", msgId);
@@ -715,6 +742,17 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     private void broadcastMessage(Bundle bundle) {
         Intent intent = new Intent(ACTION_BROADCAST);
         intent.putExtras(bundle);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+    }
+
+    private void handleHttpResponse(int status, String body) {
+        Intent intent = new Intent(ACTION_BROADCAST);
+        intent.putExtra("action", MSG_ON_HTTP_RESPONSE);
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("payload", new HttpResponse(status, body));
+        intent.putExtras(bundle);
+
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
 
@@ -757,7 +795,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
     }
 
     public Setting getSetting() {
-        logger.debug("getSetting() called, mSetting: {}", mSetting);
+        // logger.debug("getSetting() called, mSetting: {}", mSetting);
         Setting setting = mSetting;
         if (setting == null) {
             SettingDAO dao = DAOFactory.createSettingDAO(this);
@@ -828,7 +866,7 @@ public class LocationServiceImpl extends Service implements ProviderDelegate, Lo
         public void onReceive(Context context, Intent intent) {
             boolean hasConnectivity = isNetworkAvailable();
             mPostLocationTask.setHasConnectivity(hasConnectivity);
-            logger.info("Network condition changed has connectivity: {}", hasConnectivity);
+            // logger.info("Network condition changed has connectivity: {}", hasConnectivity);
         }
     };
 

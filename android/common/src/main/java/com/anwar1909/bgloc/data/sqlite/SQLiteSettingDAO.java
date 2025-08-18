@@ -64,7 +64,7 @@ public class SQLiteSettingDAO implements SettingDAO {
 
     public boolean persistSetting(Setting setting) throws NullPointerException {
         long rowId = db.replace(SQLiteSettingContract.SettingEntry.TABLE_NAME, SQLiteSettingContract.SettingEntry.COLUMN_NAME_NULLABLE, getContentValues(setting));
-        Log.d(TAG, "Configuration persisted with rowId = " + rowId);
+        // Log.d(TAG, "Configuration persisted with rowId = " + rowId);
         if (rowId > -1) {
             return true;
         } else {

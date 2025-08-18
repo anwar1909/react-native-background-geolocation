@@ -3,7 +3,7 @@
 // Definitions by: Mauron85 (@mauron85), Norbert Györög (@djereg)
 // Definitions: https://github.com/mauron85/react-native-background-geolocation/blob/master/index.d.ts
 
-type Event = 'location' | 'stationary' | 'activity' | 'start' | 'stop' | 'error' | 'authorization' | 'foreground' | 'background' | 'abort_requested' | 'http_authorization' | 'http';
+type Event = 'location' | 'stationary' | 'activity' | 'start' | 'stop' | 'error' | 'authorization' | 'foreground' | 'background' | 'abort_requested' | 'http_authorization' | 'http' | 'http_response';
 type HeadlessTaskEventName = 'location' | 'stationary' | 'activity';
 type iOSActivityType = 'AutomotiveNavigation' | 'OtherNavigation' | 'Fitness' | 'Other';
 type NativeProvider = 'gps' | 'network' | 'passive' | 'fused';
@@ -385,6 +385,12 @@ export interface Location {
    * You can enable it "postTemplate" configure option.
    */
   mockLocationsEnabled?: boolean;
+}
+
+export interface HttpResponseEvent {
+  statusCode: number;
+  body: string;
+  headers?: Record<string, string>;
 }
 
 export interface StationaryLocation extends Location {
@@ -791,6 +797,17 @@ export interface BackgroundGeolocationPlugin {
   on(
     eventName: 'location',
     callback: (location: Location) => void
+  ): void;
+
+  /**
+   * Response http event listener.
+   *
+   * @param eventName
+   * @param callback
+   */
+  on(
+    eventName: 'http_response',
+    callback: (event: HttpResponseEvent) => void
   ): void;
 
   /**
