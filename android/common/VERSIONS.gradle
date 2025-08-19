@@ -20,13 +20,21 @@ def RESOURCE_PREFIX = "anwar1909_bgloc_"
 
 ext {
     getApplicationId = { ->
-        def applicationId = "com.anwar1909.app"
-        if (findProject('..:app') != null) {
-            applicationId = project('..:app').android.defaultConfig.applicationId
-        }
+        def applicationId = null
+
+        // Kalau user override di gradle.properties atau rootProject, pakai itu
         if (rootProject.hasProperty('applicationId')) {
             applicationId = rootProject.applicationId
+        } else {
+            // Ambil dari root project name
+            def projectName = rootProject.name
+                    .replaceAll("[^A-Za-z0-9]", "") // hapus karakter aneh
+                    .toLowerCase()
+
+            // Bentuk applicationId dari nama project
+            applicationId = "com.${projectName}.app"
         }
+
         return applicationId
     }
 
